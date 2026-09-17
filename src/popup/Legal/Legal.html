@@ -1,0 +1,37 @@
+<div data-slot="header"></div>
+
+<div class="legal-tabs" role="tablist" aria-label="Legal">
+  <button class="legal-tabs__tab" type="button" role="tab" id="legal-tab-privacy" data-section="privacy" aria-controls="legal-privacy">Privacy</button>
+  <button class="legal-tabs__tab" type="button" role="tab" id="legal-tab-terms" data-section="terms" aria-controls="legal-terms">Terms</button>
+</div>
+
+<div class="screen-body legal-body scroll" data-role="scroller" tabindex="0">
+  <section class="legal-doc glass" id="legal-privacy" role="tabpanel" aria-labelledby="legal-tab-privacy" data-panel="privacy">
+    <h2 class="legal-doc__title">Privacy</h2>
+    <p class="legal-doc__lead">Protect first. Respect privacy always.</p>
+    <ul class="legal-doc__list">
+      <li>Webinel has <strong>no servers, no accounts and no sign-in</strong>. Everything it stores stays in your browser on this device.</li>
+      <li>The only outside service is <strong>VirusTotal</strong>, and only when you add your own API key. There is no telemetry and no analytics. Webinel sends VirusTotal the <em>domain</em> of sites you open and — only when you ask — a full address or a document's SHA-256 fingerprint.</li>
+      <li>Links are submitted to VirusTotal for new analysis only when you run <em>Scan Now</em> on a link it has not seen before, or <em>Advanced Analysis</em>. Submitted links become visible to the VirusTotal community.</li>
+      <li>Files are uploaded only if you press <em>Upload to VirusTotal</em> for that file. Uploaded files are shared with VirusTotal and its security partners — do not upload confidential documents.</li>
+      <li>Your API key is encrypted, stored locally, never synchronised, never shown again after saving, and sent only to VirusTotal to authenticate.</li>
+      <li>Webinel never stores email bodies, raw clipboard contents or your browsing history. Cached results are keyed by one-way hashes and contain no addresses or file names; the timeline records security events by domain or file name only.</li>
+      <li>The Email Link Scanner and Clipboard Scanner run only when you turn them on and press scan. They read links — never message text.</li>
+      <li>Removing the extension deletes all of its data.</li>
+    </ul>
+  </section>
+
+  <section class="legal-doc glass" id="legal-terms" role="tabpanel" aria-labelledby="legal-tab-terms" data-panel="terms">
+    <h2 class="legal-doc__title">Terms</h2>
+    <p class="legal-doc__lead">One edition. Every feature included.</p>
+    <ul class="legal-doc__list">
+      <li>Webinel is provided "as is", without warranty. No security tool catches every threat; a Safe or Unverified result is not a guarantee.</li>
+      <li>Your use of VirusTotal is governed by VirusTotal's own terms of service and API limits.</li>
+      <li>You are responsible for sites you choose to whitelist or continue to after a warning.</li>
+      <li>There is a single edition of Webinel. Every feature is included.</li>
+    </ul>
+    <p class="legal-doc__note">Status: TBD — this plain-language draft has not yet been reviewed by counsel.</p>
+  </section>
+</div>
+
+<div data-slot="footer"></div>

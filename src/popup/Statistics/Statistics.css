@@ -1,0 +1,141 @@
+.stats {
+  gap: 14px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stat-tile {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+}
+
+.stat-tile__value {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-tile__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.stat-tile__label .icon {
+  color: var(--accent);
+}
+
+.stats-chart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: end;
+  gap: 8px;
+  height: 132px;
+  padding: 12px 14px 8px;
+  border-radius: var(--radius-md);
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+  cursor: default;
+}
+
+.bar__track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.bar__fill {
+  width: 60%;
+  max-width: 22px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+  transition: opacity 0.15s;
+}
+
+.bar:hover .bar__fill {
+  opacity: 0.75;
+}
+
+.bar__value {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.bar__day {
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.bar__tip {
+  position: absolute;
+  bottom: calc(100% - 20px);
+  left: 50%;
+  z-index: 2;
+  padding: 5px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.bar:hover .bar__tip,
+.bar:focus-visible .bar__tip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.bar:first-child .bar__tip {
+  left: 0;
+  transform: translate(0, 4px);
+}
+
+.bar:last-child .bar__tip {
+  left: auto;
+  right: 0;
+  transform: translate(0, 4px);
+}
+
+.bar:first-child:hover .bar__tip,
+.bar:last-child:hover .bar__tip {
+  transform: translate(0, 0);
+}
+
+.stats-verdicts,
+.stats .list {
+  border-radius: var(--radius-md);
+}
+
+.list-row__value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

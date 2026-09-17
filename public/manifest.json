@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Webinel",
+  "short_name": "Webinel",
+  "description": "Your Web Sentinel — privacy-first protection against phishing, malware, fake sites and unsafe downloads.",
+  "version": "1.0.0",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Webinel — Your Web Sentinel",
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "webNavigation",
+    "webRequest",
+    "downloads",
+    "notifications"
+  ],
+  "optional_permissions": ["clipboardRead"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://www.virustotal.com; img-src 'self' data:; style-src 'self'"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "webinel@local.dev",
+      "strict_min_version": "121.0"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+<div data-slot="header"></div>
+
+<div class="screen-body scroll analysis">
+  <form class="inline-form" data-role="form" autocomplete="off" novalidate>
+    <input class="input mono" data-role="url" type="text" inputmode="url" placeholder="https://example.com/login" aria-label="URL to analyze" spellcheck="false" />
+    <button class="btn btn--primary" type="submit" data-action="analyze"><span data-icon="analysis" data-icon-size="14"></span>Analyze</button>
+  </form>
+  <button class="analysis__current" type="button" data-action="current-site" disabled>
+    <span data-icon="globe" data-icon-size="14"></span>
+    <span class="analysis__current-label">Current site</span>
+    <span class="analysis__current-host mono" data-role="current-host">No website open</span>
+  </button>
+  <p class="analysis__note">
+    Complete analysis: the URL is submitted to VirusTotal (visible to its community) and Webinel waits until every vendor has finished.
+  </p>
+
+  <div data-role="job" aria-live="polite"></div>
+
+  <div class="analysis__quick">
+    <button class="btn" type="button" data-action="scan-email"><span data-icon="mail" data-icon-size="14"></span>Scan email links</button>
+    <button class="btn" type="button" data-action="scan-clipboard"><span data-icon="clipboard" data-icon-size="14"></span>Scan clipboard</button>
+  </div>
+
+  <section class="glass links" data-role="links" hidden></section>
+
+  <section>
+    <h3 class="section-title">Redirect chain · current tab</h3>
+    <div class="glass redirects" data-role="redirects"></div>
+  </section>
+</div>
+
+<div data-slot="footer"></div>

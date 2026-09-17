@@ -1,0 +1,17 @@
+<div data-slot="header"></div>
+
+<div class="screen-body scroll documents">
+  <label class="dropzone glass" data-role="dropzone" tabindex="0">
+    <input type="file" data-role="file" hidden />
+    <span class="dropzone__icon" data-icon="upload" data-icon-size="26"></span>
+    <strong>Drop a file or click to choose</strong>
+    <small>PDF · DOCX · XLSX · ZIP · EXE · APK · PNG · JPG · GIF · TXT — up to 32 MB</small>
+    <small>Files are fingerprinted on this device. Only the SHA-256 is checked; nothing is uploaded unless you say so.</small>
+    <small class="dropzone__hint" data-role="picker-hint" hidden>Clicking opens a small Webinel scanner window, because your browser closes this popup while its file chooser is open. Dragging a file here works directly.</small>
+  </label>
+
+  <div data-role="result" aria-live="polite"></div>
+  <section class="glass links" data-role="links" hidden></section>
+</div>
+
+<div data-slot="footer"></div>

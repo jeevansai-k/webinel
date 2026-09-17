@@ -1,0 +1,18 @@
+<div data-slot="header"></div>
+
+<div class="screen-body">
+  <div class="timeline__filters" role="tablist" aria-label="Filter events">
+    <button class="timeline__filter" type="button" role="tab" data-filter="all" aria-selected="true">All</button>
+    <button class="timeline__filter" type="button" role="tab" data-filter="threats" aria-selected="false">Threats</button>
+    <button class="timeline__filter" type="button" role="tab" data-filter="scans" aria-selected="false">Scans</button>
+    <button class="timeline__filter" type="button" role="tab" data-filter="changes" aria-selected="false">Changes</button>
+  </div>
+  <div class="glass panel scroll">
+    <ol class="timeline" data-role="list"></ol>
+  </div>
+  <button class="btn btn--block" type="button" data-action="clear">
+    <span data-icon="trash" data-icon-size="14"></span>Clear timeline
+  </button>
+</div>
+
+<div data-slot="footer"></div>

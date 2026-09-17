@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head><meta charset="utf-8" /><title>Webinel warning preview</title></head>
+  <body class="warning-page">
+    <div id="host"></div>
+    <script type="module">
+      import './chromeStub.ts';
+      import markup from '../src/warning/Warning.html?raw';
+      const body = new DOMParser().parseFromString(markup, 'text/html').body;
+      body.querySelector('script')?.remove();
+      document.getElementById('host').replaceWith(...body.childNodes);
+      history.replaceState(null, '', '?id=demo');
+      await import('../src/warning/Warning.ts');
+    </script>
+  </body>
+</html>

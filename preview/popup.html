@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head><meta charset="utf-8" /><title>Webinel popup preview</title></head>
+  <body>
+    <main id="app" class="popup"></main>
+    <script type="module">
+      import './chromeStub.ts';
+      const params = new URLSearchParams(location.search);
+      const screen = params.get('screen');
+      if (screen) location.hash = screen;
+      await import('../src/popup/main.ts');
+    </script>
+  </body>
+</html>

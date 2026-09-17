@@ -1,0 +1,18 @@
+<div data-slot="header"></div>
+
+<div class="screen-body">
+  <p class="muted whitelist__intro">Trusted sites are never blocked. Subdomains are included.</p>
+  <form class="inline-form" data-role="form" autocomplete="off">
+    <input class="input" data-role="input" type="text" placeholder="example.com" aria-label="Domain to trust" spellcheck="false" />
+    <button class="btn btn--primary" type="submit"><span data-icon="plus" data-icon-size="14"></span>Add</button>
+  </form>
+  <button class="btn btn--block" type="button" data-action="add-current" hidden>
+    <span data-icon="globe" data-icon-size="14"></span><span data-role="current-label">Trust current site</span>
+  </button>
+  <h3 class="section-title">Trusted sites <span data-role="count"></span></h3>
+  <div class="glass panel scroll">
+    <ul class="list" data-role="list"></ul>
+  </div>
+</div>
+
+<div data-slot="footer"></div>

@@ -1,0 +1,120 @@
+<div data-slot="header"></div>
+
+<div class="screen-body scroll settings">
+  <section class="vt-card glass" aria-labelledby="vt-title">
+    <div class="vt-card__row">
+      <span class="vt-card__icon" data-icon="key" data-icon-size="18"></span>
+      <div class="vt-card__main">
+        <h2 class="vt-card__title" id="vt-title">VirusTotal API</h2>
+        <p class="vt-card__secret mono" data-role="secret" aria-label="API key hidden">••••••••••••••••</p>
+      </div>
+      <div class="vt-card__actions">
+        <button class="icon-btn" type="button" data-action="edit-key" aria-label="Edit API key" title="Edit API key">
+          <span data-icon="pencil" data-icon-size="16"></span>
+        </button>
+        <button class="icon-btn" type="button" data-action="check-health" aria-label="Check API reachability" title="Check API reachability">
+          <span data-icon="refresh" data-icon-size="16"></span>
+        </button>
+      </div>
+    </div>
+    <p class="vt-card__subtitle">
+      <span data-icon="lock" data-icon-size="12"></span>Stored locally on this device.
+      <span class="vt-card__health" data-role="health" data-state="idle"></span>
+    </p>
+
+    <form class="vt-editor" data-role="editor" hidden autocomplete="off">
+      <label class="vt-editor__label" for="vt-key-input">Paste your VirusTotal API key</label>
+      <input
+        class="input mono"
+        id="vt-key-input"
+        data-role="key-input"
+        type="password"
+        spellcheck="false"
+        autocomplete="off"
+        inputmode="text"
+        maxlength="128"
+        placeholder="64-character key"
+      />
+      <div class="vt-editor__buttons">
+        <button class="btn" type="button" data-action="remove-key" hidden>Remove key</button>
+        <span class="vt-editor__spacer"></span>
+        <button class="btn" type="button" data-action="cancel-key">Cancel</button>
+        <button class="btn btn--primary" type="submit" data-action="save-key">Save</button>
+      </div>
+      <p class="vt-editor__hint">Get a free key at virustotal.com → your profile → API key. It never leaves this device except to authenticate with VirusTotal.</p>
+    </form>
+  </section>
+
+  <section>
+    <h3 class="section-title">Protection</h3>
+    <div class="glass settings-group">
+      <label class="setting-row">
+        <span class="setting-row__icon" data-icon="bolt" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Real-time Protection</strong><small>Check every site you open</small></span>
+        <input class="switch" type="checkbox" data-setting="realTimeProtection" />
+      </label>
+      <label class="setting-row">
+        <span class="setting-row__icon" data-icon="shieldAlert" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Block suspicious sites</strong><small>Treat suspicious like dangerous</small></span>
+        <input class="switch" type="checkbox" data-setting="blockSuspicious" />
+      </label>
+      <label class="setting-row">
+        <span class="setting-row__icon" data-icon="download" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Download Reputation Scanner</strong><small>Stop disguised and risky files</small></span>
+        <input class="switch" type="checkbox" data-setting="downloadScanner" />
+      </label>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-title">Scanners</h3>
+    <div class="glass settings-group">
+      <label class="setting-row">
+        <span class="setting-row__icon" data-icon="clipboard" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Clipboard Scanner</strong><small>Scan copied links only when you ask</small></span>
+        <input class="switch" type="checkbox" data-setting="clipboardScanner" />
+      </label>
+      <label class="setting-row">
+        <span class="setting-row__icon" data-icon="mail" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Email Link Scanner</strong><small>Check links in an open email — never its text</small></span>
+        <input class="switch" type="checkbox" data-setting="emailLinkScanner" />
+      </label>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-title">Appearance &amp; Support</h3>
+    <div class="glass settings-group">
+      <label class="setting-row">
+        <span class="setting-row__icon" data-role="theme-icon"></span>
+        <span class="setting-row__text"><strong>Theme</strong><small data-role="theme-label">Dark</small></span>
+        <input class="switch" type="checkbox" data-role="theme-switch" aria-label="Use light theme" />
+      </label>
+      <button class="setting-row setting-row--button" type="button" data-action="contact" aria-expanded="false" aria-controls="contact-panel">
+        <span class="setting-row__icon" data-icon="message" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Contact Developer</strong><small>Email the developer — report a bug or a false positive</small></span>
+        <span class="setting-row__chevron" data-icon="mail" data-icon-size="14"></span>
+      </button>
+      <div class="contact-panel" id="contact-panel" data-role="contact-panel" hidden>
+        <p class="contact-panel__text">
+          Your email app should now open a new message to
+          <strong class="mono" data-role="developer-email"></strong>.
+        </p>
+        <div class="contact-panel__buttons">
+          <button class="btn" type="button" data-action="email-again">
+            <span data-icon="mail" data-icon-size="13"></span>Email again
+          </button>
+          <button class="btn btn--primary" type="button" data-action="open-github">
+            <span data-icon="external" data-icon-size="13"></span>Visit developer GitHub
+          </button>
+        </div>
+      </div>
+      <button class="setting-row setting-row--button" type="button" data-action="clear-cache">
+        <span class="setting-row__icon" data-icon="trash" data-icon-size="16"></span>
+        <span class="setting-row__text"><strong>Clear Smart Cache</strong><small>Forget cached VirusTotal results</small></span>
+      </button>
+    </div>
+  </section>
+</div>
+
+<div data-slot="footer"></div>

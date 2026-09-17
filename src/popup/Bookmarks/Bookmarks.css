@@ -1,0 +1,17 @@
+.bookmarks__intro {
+  font-size: 12px;
+}
+
+.bookmark-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bookmark-row:hover {
+  background: var(--glass-hover);
+}
+
+.bookmark-row[aria-busy='true'] {
+  opacity: 0.6;
+  pointer-events: none;
+}

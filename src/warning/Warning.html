@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Blocked by Webinel</title>
+  </head>
+  <body class="warning-page">
+    <main class="warning glass" aria-labelledby="warning-title">
+      <header class="warning__brand">
+        <span data-slot="logo"></span>
+        <span class="warning__brand-text"><strong>Webinel</strong><small>Your Web Sentinel</small></span>
+      </header>
+
+      <div class="warning__shield" aria-hidden="true">
+        <span class="warning__pulse"></span>
+        <span class="warning__pulse warning__pulse--late"></span>
+        <span class="warning__shield-icon" data-slot="shield"></span>
+      </div>
+
+      <h1 class="warning__title" id="warning-title" data-role="title">Dangerous site blocked</h1>
+      <p class="warning__host mono" data-role="host">—</p>
+      <p class="warning__message" data-role="message">
+        Webinel stopped this page because it may try to steal your passwords, payment details or install malware.
+      </p>
+
+      <ul class="warning__reasons" data-role="reasons"></ul>
+
+      <div class="warning__actions">
+        <button class="btn btn--primary warning__safe" type="button" data-action="back">Back to safety</button>
+        <div class="warning__secondary">
+          <button class="btn continue-gate" type="button" data-action="continue" disabled aria-disabled="true" data-gate="locked">
+            <span class="continue-gate__label">Continue Anyway</span>
+            <span class="continue-gate__overlay" data-role="gate-overlay" aria-hidden="true"></span>
+          </button>
+          <button class="btn" type="button" data-action="whitelist">Whitelist this Site</button>
+        </div>
+      </div>
+
+      <footer class="warning__footer">Protected by <strong>Webinel</strong> · Your Web Sentinel</footer>
+    </main>
+    <script type="module" src="./Warning.ts"></script>
+  </body>
+</html>
