@@ -27,25 +27,83 @@ import '../AdvancedAnalysis/AdvancedAnalysis.css';
 export const uploadDeps: { staging: UploadStaging } = { staging: indexedDbStaging };
 
 export const SCANNER_WINDOW_PATH = 'popup/index.html?mode=window';
+/** Same page the manifest registers as Firefox `sidebar_action` and Chrome `side_panel`. */
+export const SCANNER_PANEL_PATH = 'popup/index.html?mode=panel#documents';
+
+export type PageMode = 'popup' | 'window' | 'panel';
+
+/** Where this page is running: the toolbar popup, the fallback scanner window, or the side panel. */
+export function pageMode(): PageMode {
+  const mode = new URLSearchParams(location.search).get('mode');
+  return mode === 'window' || mode === 'panel' ? mode : 'popup';
+}
 
 export function isScannerWindow(): boolean {
-  return new URLSearchParams(location.search).get('mode') === 'window';
+  return pageMode() === 'window';
+}
+
+interface FirefoxSidebar {
+  open(): Promise<void>;
+}
+
+interface ChromeSidePanel {
+  open(options: { windowId: number }): Promise<void>;
+}
+
+function firefoxSidebar(): FirefoxSidebar | null {
+  const sidebar = (globalThis as { browser?: { sidebarAction?: Partial<FirefoxSidebar> } }).browser?.sidebarAction;
+  return typeof sidebar?.open === 'function' ? (sidebar as FirefoxSidebar) : null;
+}
+
+function chromeSidePanel(): ChromeSidePanel | null {
+  const panel = (chrome as unknown as { sidePanel?: Partial<ChromeSidePanel> }).sidePanel;
+  return typeof panel?.open === 'function' ? (panel as ChromeSidePanel) : null;
+}
+
+function isFirefox(): boolean {
+  return typeof (globalThis as { browser?: { runtime?: { getBrowserInfo?: unknown } } }).browser?.runtime?.getBrowserInfo === 'function';
 }
 
 /**
  * Where the native file chooser can open without losing the result.
- * On Windows and Linux, Chrome closes an extension's toolbar popup as soon as a
- * file dialog takes focus, so the chooser is opened from a small Webinel window
- * instead (same 440 × 600 interface, not a browser tab). macOS keeps the popup open.
+ * Firefox, and Chrome on Windows/Linux, close an extension's toolbar popup as
+ * soon as a file dialog takes focus. There the chooser opens from the browser's
+ * side panel (Firefox sidebar / Chrome side panel), which stays open; if neither
+ * exists, from a small Webinel window. Chrome on macOS keeps the popup open.
  */
-export async function filePickerMode(): Promise<'inline' | 'window'> {
-  if (isScannerWindow()) return 'inline';
-  try {
-    const platform = await chrome.runtime.getPlatformInfo();
-    return platform.os === 'mac' ? 'inline' : 'window';
-  } catch {
-    return 'window';
+export async function filePickerMode(): Promise<'inline' | 'panel' | 'window'> {
+  if (pageMode() !== 'popup') return 'inline';
+  if (!isFirefox()) {
+    const os = await chrome.runtime
+      .getPlatformInfo()
+      .then((info) => info.os)
+      .catch(() => null);
+    if (os === 'mac') return 'inline';
   }
+  return firefoxSidebar() || chromeSidePanel() ? 'panel' : 'window';
+}
+
+/**
+ * Opens the Document Scanner in the side panel, then closes the popup.
+ * Must be called synchronously from the click/keydown handler: both browsers only
+ * open panels in direct response to user input. Falls back to the scanner window.
+ */
+export function openScannerPanel(windowId: number | null): void {
+  let opening: Promise<void>;
+  try {
+    const sidebar = firefoxSidebar();
+    const panel = chromeSidePanel();
+    if (sidebar) opening = sidebar.open();
+    else if (panel && windowId !== null) opening = panel.open({ windowId });
+    else throw new Error('No side panel available');
+  } catch {
+    void openScannerWindow();
+    return;
+  }
+  opening.then(
+    () => window.close(),
+    () => void openScannerWindow(),
+  );
 }
 
 /** Opens (or focuses) the scanner window, then closes the toolbar popup. */
@@ -106,9 +164,28 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
   const linksPanel = query(root, '[data-role="links"]');
   fileInput.accept = FILE_INPUT_ACCEPT;
   const pickerMode = await filePickerMode();
-  if (pickerMode === 'window') {
-    query(root, '[data-role="picker-hint"]').hidden = false;
+  const hint = query(root, '[data-role="picker-hint"]');
+  if (pickerMode !== 'inline') {
+    hint.textContent =
+      pickerMode === 'panel'
+        ? 'Clicking opens the scanner in your browser’s side panel, because the browser closes this popup while its file chooser is open. Dragging a file here works directly.'
+        : 'Clicking opens a small Webinel scanner window, because your browser closes this popup while its file chooser is open. Dragging a file here works directly.';
+    hint.hidden = false;
   }
+  // Fetched ahead of time: the side panel must open synchronously inside the click.
+  let windowId: number | null = null;
+  if (pickerMode === 'panel') {
+    void chrome.windows
+      .getCurrent()
+      .then((current) => {
+        windowId = current.id ?? null;
+      })
+      .catch(() => undefined);
+  }
+  const openPicker = () => {
+    if (pickerMode === 'panel') openScannerPanel(windowId);
+    else void openScannerWindow();
+  };
 
   let jobId: string | null = null;
   let renderedKey = '';
@@ -140,7 +217,13 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
     const { meta, file } = pending;
     result.innerHTML = `<p class="documents__working">Preparing ${escapeHtml(meta.fileName)} for upload…</p>`;
     try {
-      const stagingId = await uploadDeps.staging.put(file);
+      let stagingId: string;
+      try {
+        stagingId = await uploadDeps.staging.put(file);
+      } catch {
+        showError(describeScanError('upload-handoff'));
+        return;
+      }
       const started = await sendMessage('file:upload', { meta, stagingId, consent: true });
       if (started.kind === 'job') {
         jobId = started.jobId;
@@ -155,8 +238,15 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
 
   const showConsent = (meta: FileMeta) => {
     result.innerHTML = consentHtml(meta);
-    query(result, '[data-action="approve-upload"]').addEventListener('click', () => void upload());
-    query(result, '[data-action="decline-upload"]').addEventListener('click', () => {
+    const approve = query<HTMLButtonElement>(result, '[data-action="approve-upload"]');
+    const decline = query<HTMLButtonElement>(result, '[data-action="decline-upload"]');
+    approve.addEventListener('click', () => {
+      // One press only: a second click must never start (or land on) anything else.
+      approve.disabled = true;
+      decline.disabled = true;
+      void upload();
+    });
+    decline.addEventListener('click', () => {
       result.innerHTML = declinedHtml(meta);
       query(result, '[data-action="reconsider"]').addEventListener('click', () => showConsent(meta));
     });
@@ -216,7 +306,7 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
   dropzone.addEventListener('click', (event) => {
     if (pickerMode === 'inline') return;
     event.preventDefault();
-    void openScannerWindow();
+    openPicker();
   });
   fileInput.addEventListener('change', () => {
     const file = fileInput.files?.[0];
@@ -226,7 +316,7 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     if (pickerMode === 'inline') fileInput.click();
-    else void openScannerWindow();
+    else openPicker();
   });
   dropzone.addEventListener('dragover', (event) => {
     event.preventDefault();

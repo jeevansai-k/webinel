@@ -192,3 +192,25 @@ body {
   background: var(--danger-soft);
   border-color: transparent;
 }
+
+/*
+ * Side panel (Chrome side panel / Firefox sidebar): the same app, fluid instead
+ * of the fixed 440 × 600 popup frame. The panel stays open while a file chooser
+ * is up, which is why the Document Scanner lives here.
+ */
+:root[data-mode='panel'],
+:root[data-mode='panel'] body {
+  width: 100%;
+  min-width: 280px;
+  max-width: none;
+  height: 100vh;
+  min-height: 0;
+  max-height: none;
+}
+
+:root[data-mode='panel'] .popup {
+  width: 100%;
+  height: 100vh;
+  border-radius: 0;
+  box-shadow: none;
+}

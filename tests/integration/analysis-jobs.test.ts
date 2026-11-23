@@ -53,6 +53,30 @@ describe('AnalysisJobs (background polling)', () => {
     expect(await jobs.cancel(jobId)).toBe(false);
   });
 
+  it('keeps the background awake only while a job is running', async () => {
+    const client = fakeClient();
+    let release!: () => void;
+    client.getAnalysis.mockImplementation(async () => {
+      await new Promise<void>((resolve) => (release = resolve));
+      return { status: 'ok', analysis: snapshot('completed') };
+    });
+    const { jobs } = setup(client);
+    expect(jobs.keepingAlive).toBe(false);
+    const jobId = await jobs.startUrl('https://example.com/');
+    expect(jobs.keepingAlive).toBe(true);
+    await vi.waitFor(() => expect(client.getAnalysis).toHaveBeenCalled());
+    release();
+    await jobs.settled(jobId);
+    expect(jobs.keepingAlive).toBe(false);
+  });
+
+  it('reports a failed file handoff, never "cancelled"', async () => {
+    const { jobs, staging } = setup();
+    const meta = { fileName: 'new.exe', sha256: 'a'.repeat(64), size: 5, mimeType: 'application/octet-stream' };
+    await expect(jobs.startFileUpload(meta, 'missing-id', true)).rejects.toMatchObject({ code: 'upload-handoff' });
+    expect(staging.size()).toBe(0);
+  });
+
   it('records friendly failures', async () => {
     const client = fakeClient();
     client.submitUrl.mockResolvedValue({ status: 'quota-exceeded', analysisId: null });

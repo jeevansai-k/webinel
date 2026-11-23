@@ -80,6 +80,20 @@ describe('popup frame', () => {
   });
 });
 
+describe('side panel', () => {
+  it('registers the Document Scanner as Firefox sidebar and Chrome side panel', () => {
+    expect(manifest.sidebar_action.default_panel).toBe('popup/index.html?mode=panel#documents');
+    expect(manifest.sidebar_action.open_at_install).toBe(false);
+    expect(manifest.side_panel.default_path).toBe('popup/index.html?mode=panel#documents');
+    expect(manifest.permissions).toContain('sidePanel');
+  });
+
+  it('lets the panel page grow past the fixed popup frame', () => {
+    expect(css).toMatch(/:root\[data-mode='panel'\] body\s*{[^}]*max-width: none;/);
+    expect(css).toMatch(/:root\[data-mode='panel'\] \.popup\s*{[^}]*width: 100%;/);
+  });
+});
+
 describe('manifest', () => {
   it('is Manifest V3 with a local-only footprint', () => {
     expect(manifest.manifest_version).toBe(3);

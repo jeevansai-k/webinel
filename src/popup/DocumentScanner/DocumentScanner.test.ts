@@ -141,6 +141,113 @@ describe('Document Scanner screen', () => {
     (cleanup as () => void)();
   });
 
+  describe('side panel', () => {
+    const withChromeSidePanel = (open = vi.fn(async () => undefined)) => {
+      (chromeFake() as unknown as { sidePanel?: unknown }).sidePanel = { open };
+      return open;
+    };
+    const cleanupPanels = () => {
+      delete (chromeFake() as unknown as { sidePanel?: unknown }).sidePanel;
+      delete (globalThis as { browser?: unknown }).browser;
+    };
+
+    it('opens the scanner in the Chrome side panel instead of a separate window', async () => {
+      const open = withChromeSidePanel();
+      const close = vi.spyOn(window, 'close').mockImplementation(() => undefined);
+      const { root, cleanup } = await mountScreen(mount);
+      expect(text(root.querySelector('[data-role="picker-hint"]'))).toContain('side panel');
+      await vi.waitFor(() => expect(chromeFake().windows.getCurrent).toHaveBeenCalled());
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      root.querySelector<HTMLElement>('[data-role="dropzone"]')!.click();
+      // Called synchronously inside the click, as the browser requires.
+      expect(open).toHaveBeenCalledWith({ windowId: 99 });
+      await vi.waitFor(() => expect(close).toHaveBeenCalled());
+      expect(chromeFake().windows.create).not.toHaveBeenCalled();
+      (cleanup as () => void)();
+      cleanupPanels();
+    });
+
+    it('opens the Firefox sidebar, on every OS', async () => {
+      const open = vi.fn(async () => undefined);
+      (globalThis as { browser?: unknown }).browser = { sidebarAction: { open }, runtime: { getBrowserInfo: vi.fn() } };
+      chromeFake().runtime.getPlatformInfo.mockResolvedValue({ os: 'mac', arch: 'arm', nacl_arch: 'arm' });
+      const close = vi.spyOn(window, 'close').mockImplementation(() => undefined);
+      const { root, cleanup } = await mountScreen(mount);
+      const nativePicker = vi.fn();
+      root.querySelector<HTMLInputElement>('[data-role="file"]')!.addEventListener('click', nativePicker);
+      root.querySelector<HTMLElement>('[data-role="dropzone"]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+      expect(open).toHaveBeenCalledTimes(1);
+      expect(nativePicker).not.toHaveBeenCalled();
+      await vi.waitFor(() => expect(close).toHaveBeenCalled());
+      (cleanup as () => void)();
+      cleanupPanels();
+    });
+
+    it('falls back to the scanner window when the side panel refuses to open', async () => {
+      withChromeSidePanel(vi.fn(async () => Promise.reject(new Error('no gesture'))));
+      vi.spyOn(window, 'close').mockImplementation(() => undefined);
+      const { root, cleanup } = await mountScreen(mount);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      root.querySelector<HTMLElement>('[data-role="dropzone"]')!.click();
+      await vi.waitFor(() => expect(chromeFake().windows.create).toHaveBeenCalled());
+      (cleanup as () => void)();
+      cleanupPanels();
+    });
+
+    it('uses the native chooser inside the side panel itself', async () => {
+      withChromeSidePanel();
+      window.history.replaceState(null, '', '/popup/index.html?mode=panel#documents');
+      const { root, cleanup } = await mountScreen(mount);
+      const nativePicker = vi.fn();
+      root.querySelector<HTMLInputElement>('[data-role="file"]')!.addEventListener('click', nativePicker);
+      root.querySelector<HTMLElement>('[data-role="dropzone"]')!.click();
+      expect(nativePicker).toHaveBeenCalledTimes(1);
+      expect(root.querySelector<HTMLElement>('[data-role="picker-hint"]')!.hidden).toBe(true);
+      (cleanup as () => void)();
+      cleanupPanels();
+      window.history.replaceState(null, '', '/');
+    });
+  });
+
+  it('starts only one upload however many times Upload is pressed', async () => {
+    const upload = vi.fn(async () => {
+      await analysisJobStore.put(job({ id: 'once', kind: 'file', target: 'new.exe', phase: 'uploading', polls: 0 }));
+      return { kind: 'job', jobId: 'once' };
+    });
+    respondTo({ 'file:lookup': ({ sha256 }: { sha256: string }) => ({ kind: 'needs-upload', sha256 }), 'file:upload': upload });
+    const { root, cleanup } = await mountScreen(mount);
+    drop(root, new File(['fresh bytes'], 'new.exe'));
+    const approve = await vi.waitFor(() => {
+      const found = root.querySelector<HTMLButtonElement>('[data-action="approve-upload"]');
+      if (!found) throw new Error('consent not shown yet');
+      return found;
+    });
+    const decline = root.querySelector<HTMLButtonElement>('[data-action="decline-upload"]')!;
+    approve.click();
+    expect(approve.disabled).toBe(true);
+    expect(decline.disabled).toBe(true);
+    approve.click();
+    await vi.waitFor(() => expect(root.querySelector('.analysis-progress')).not.toBeNull());
+    expect(upload).toHaveBeenCalledTimes(1);
+    expect(chromeFake().runtime.sendMessage).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'analysis:cancel' }));
+    (cleanup as () => void)();
+  });
+
+  it('explains a failed handoff instead of claiming the analysis was cancelled', async () => {
+    uploadDeps.staging = { ...memoryStaging(), put: async () => Promise.reject(new Error('IDB unavailable')) };
+    respondTo({ 'file:lookup': ({ sha256 }: { sha256: string }) => ({ kind: 'needs-upload', sha256 }) });
+    const { root, cleanup } = await mountScreen(mount);
+    drop(root, new File(['fresh bytes'], 'new.exe'));
+    (await vi.waitFor(() => {
+      const found = root.querySelector<HTMLButtonElement>('[data-action="approve-upload"]');
+      if (!found) throw new Error('consent not shown yet');
+      return found;
+    })).click();
+    await vi.waitFor(() => expect(text(root.querySelector('[data-role="result"]'))).toContain('could not reach Webinel'));
+    expect(text(root.querySelector('[data-role="result"]'))).not.toContain('cancelled');
+    (cleanup as () => void)();
+  });
+
   it('focuses an existing scanner window instead of opening another', async () => {
     vi.spyOn(window, 'close').mockImplementation(() => undefined);
     chromeFake().tabs.query.mockResolvedValue([{ id: 3, windowId: 77, url: 'chrome-extension://webinel-test/popup/index.html?mode=window#documents' } as chrome.tabs.Tab]);

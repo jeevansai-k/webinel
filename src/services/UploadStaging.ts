@@ -13,6 +13,14 @@ export interface UploadStaging {
 const DB_NAME = 'webinel-uploads';
 const STORE = 'files';
 
+/** The file could not be passed between the popup and the background. */
+export class StagingError extends Error {
+  constructor(message: string, override readonly cause?: unknown) {
+    super(message);
+    this.name = 'StagingError';
+  }
+}
+
 function promisify<T>(request: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
@@ -20,30 +28,65 @@ function promisify<T>(request: IDBRequest<T>): Promise<T> {
   });
 }
 
-async function withStore<T>(mode: IDBTransactionMode, run: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+function transactionDone(transaction: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error ?? new DOMException('Transaction aborted', 'AbortError'));
+  });
+}
+
+async function openDb(): Promise<IDBDatabase> {
   const open = indexedDB.open(DB_NAME, 1);
   open.onupgradeneeded = () => open.result.createObjectStore(STORE);
-  const db = await promisify(open);
+  return promisify(open);
+}
+
+/**
+ * Runs one transaction and resolves only after it has committed. Any IndexedDB
+ * failure (including Firefox aborting the transaction) becomes a StagingError,
+ * never a bare AbortError that could be mistaken for the user cancelling.
+ */
+async function withTransaction<T>(mode: IDBTransactionMode, run: (store: IDBObjectStore) => Promise<T>): Promise<T> {
+  let db: IDBDatabase | null = null;
   try {
-    return await promisify(run(db.transaction(STORE, mode).objectStore(STORE)));
+    db = await openDb();
+    const transaction = db.transaction(STORE, mode);
+    const done = transactionDone(transaction);
+    const result = await run(transaction.objectStore(STORE));
+    await done;
+    return result;
+  } catch (error) {
+    throw error instanceof StagingError ? error : new StagingError('Could not stage the file for upload.', error);
   } finally {
-    db.close();
+    db?.close();
   }
 }
 
 export const indexedDbStaging: UploadStaging = {
   async put(blob) {
     const id = crypto.randomUUID();
-    await withStore('readwrite', (store) => store.put(blob, id));
+    await withTransaction('readwrite', (store) => promisify(store.put(blob, id)));
     return id;
   },
   async take(id) {
-    const blob = await withStore<Blob | undefined>('readonly', (store) => store.get(id));
-    await withStore('readwrite', (store) => store.delete(id));
-    return blob ?? null;
+    // Read and delete in one transaction, then copy the bytes out. A Blob that is
+    // still backed by an IndexedDB record can become unreadable once that record is
+    // deleted (Firefox), so the background only ever handles an in-memory copy.
+    const stored = await withTransaction<Blob | undefined>('readwrite', async (store) => {
+      const blob = await promisify<Blob | undefined>(store.get(id));
+      store.delete(id);
+      return blob;
+    });
+    if (!stored) return null;
+    try {
+      return new Blob([await stored.arrayBuffer()], { type: stored.type });
+    } catch (error) {
+      throw new StagingError('The staged file could not be read.', error);
+    }
   },
   async clear() {
-    await withStore('readwrite', (store) => store.clear());
+    await withTransaction('readwrite', (store) => promisify(store.clear()).then(() => undefined));
   },
 };
 

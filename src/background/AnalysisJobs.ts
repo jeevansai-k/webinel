@@ -17,15 +17,33 @@ import { getHost } from '../utils/url';
 
 type Work = (signal: AbortSignal, progress: (update: FullScanProgress | { phase: 'uploading' }) => Promise<void>) => Promise<ScanReport>;
 
+/** Firefox suspends an idle MV3 event page after ~30 s; any extension API call resets that timer. */
+export const KEEPALIVE_INTERVAL_MS = 20_000;
+
 export class AnalysisJobs {
   private readonly controllers = new Map<string, AbortController>();
   private readonly running = new Map<string, Promise<void>>();
+  private keepAlive: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly urls: UrlScanner,
     private readonly files: FileScanner,
     private readonly staging: UploadStaging,
   ) {}
+
+  /** True while a keep-alive timer is holding the background page awake (test hook). */
+  get keepingAlive(): boolean {
+    return this.keepAlive !== null;
+  }
+
+  private updateKeepAlive(): void {
+    if (this.controllers.size > 0 && !this.keepAlive) {
+      this.keepAlive = setInterval(() => void chrome.runtime.getPlatformInfo().catch(() => undefined), KEEPALIVE_INTERVAL_MS);
+    } else if (this.controllers.size === 0 && this.keepAlive) {
+      clearInterval(this.keepAlive);
+      this.keepAlive = null;
+    }
+  }
 
   /** Jobs left active by a terminated worker cannot resume; mark them clearly. */
   async recoverInterrupted(): Promise<void> {
@@ -53,12 +71,12 @@ export class AnalysisJobs {
 
   async startFileUpload(meta: FileMeta, stagingId: string, consent: boolean): Promise<string> {
     if (consent !== true) {
-      await this.staging.take(stagingId);
+      await this.staging.take(stagingId).catch(() => null);
       throw new ScanError('consent-required');
     }
     validateFile(meta);
     const blob = await this.staging.take(stagingId);
-    if (!blob) throw new ScanError('server-error');
+    if (!blob) throw new ScanError('upload-handoff');
     return this.start(
       'file',
       meta.fileName,
@@ -105,6 +123,7 @@ export class AnalysisJobs {
     await analysisJobStore.put(job);
     const controller = new AbortController();
     this.controllers.set(job.id, controller);
+    this.updateKeepAlive();
 
     const progress = async (update: FullScanProgress | { phase: 'uploading' }) => {
       if (controller.signal.aborted) return;
@@ -132,6 +151,7 @@ export class AnalysisJobs {
       .finally(() => {
         this.controllers.delete(job.id);
         this.running.delete(job.id);
+        this.updateKeepAlive();
       });
     this.running.set(job.id, run);
     return job.id;

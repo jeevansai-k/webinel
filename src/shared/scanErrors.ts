@@ -18,7 +18,8 @@ export type ScanErrorCode =
   | 'server-error'
   | 'timeout'
   | 'cancelled'
-  | 'interrupted';
+  | 'interrupted'
+  | 'upload-handoff';
 
 export type ScanErrorAction = 'open-settings' | 'retry' | null;
 
@@ -96,6 +97,11 @@ const ERRORS: Record<ScanErrorCode, Omit<ScanErrorInfo, 'code'>> = {
     message: 'No further requests were made.',
     action: 'retry',
   },
+  'upload-handoff': {
+    title: 'The file could not reach Webinel’s background.',
+    message: 'Nothing was uploaded. Try again; if it keeps happening, reload the extension or restart the browser.',
+    action: 'retry',
+  },
   interrupted: {
     title: 'Analysis was interrupted.',
     message: 'The browser stopped Webinel’s background worker. Start the analysis again.',
@@ -138,8 +144,15 @@ export class ScanError extends Error {
   }
 }
 
+/**
+ * Maps an unexpected failure to a user-facing error. "Cancelled" is never derived
+ * from an error: only an explicit user cancel (tracked by the caller) may show it.
+ * A stray AbortError means the browser cut the work short (e.g. Firefox suspending
+ * the background page or aborting an IndexedDB transaction).
+ */
 export function toScanErrorInfo(error: unknown): ScanErrorInfo {
   if (error instanceof ScanError) return error.info;
-  if (error instanceof DOMException && error.name === 'AbortError') return describeScanError('cancelled');
+  if (error instanceof Error && error.name === 'StagingError') return describeScanError('upload-handoff');
+  if (error instanceof DOMException && error.name === 'AbortError') return describeScanError('interrupted');
   return describeScanError('server-error');
 }

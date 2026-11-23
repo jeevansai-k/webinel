@@ -3,7 +3,7 @@ import './popup.css';
 import { initTheme } from '../shared/theme';
 import { mount as mountAdvancedAnalysis } from './AdvancedAnalysis/AdvancedAnalysis';
 import { mount as mountBookmarks } from './Bookmarks/Bookmarks';
-import { isScannerWindow, mount as mountDocumentScanner } from './DocumentScanner/DocumentScanner';
+import { mount as mountDocumentScanner, pageMode } from './DocumentScanner/DocumentScanner';
 import { mount as mountHome } from './Home/Home';
 import { mount as mountLegal } from './Legal/Legal';
 import { mount as mountScanNow } from './Home/ScanNow/ScanNow';
@@ -38,10 +38,9 @@ async function fitScannerWindow(): Promise<void> {
 
 async function start(): Promise<void> {
   await initTheme();
-  if (isScannerWindow()) {
-    document.documentElement.dataset.mode = 'window';
-    void fitScannerWindow().catch(() => undefined);
-  }
+  const mode = pageMode();
+  if (mode !== 'popup') document.documentElement.dataset.mode = mode;
+  if (mode === 'window') void fitScannerWindow().catch(() => undefined);
   // Optional deep link (used by the dev preview), e.g. popup/index.html#settings.
   const initial = location.hash.slice(1) as ScreenName;
   const router = new Router(document.getElementById('app')!, SCREENS);
