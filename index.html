@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Webinel — Your Web Sentinel</title>
+  <meta name="description" content="A free, privacy-first browser extension for Chrome and Firefox that stops phishing, look-alike domains and unsafe downloads before you click. No account, no tracking." />
+  <meta name="theme-color" content="#0a101b" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f1f4f9" media="(prefers-color-scheme: light)" />
+  <meta property="og:title" content="Webinel — Your Web Sentinel" />
+  <meta property="og:description" content="That's not PayPal. Webinel stops look-alike sites, phishing and bad downloads before you click. Free, no account, no tracking." />
+  <meta property="og:image" content="https://jeevansai-k.github.io/webinel/assets/video/launch-poster.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="top">
+    <div class="wrap nav__inner">
+      <a class="brand" href="#top" aria-label="Webinel home">
+        <img src="assets/logo.svg" width="34" height="34" alt="" />
+        <span class="brand__name">Webinel</span>
+      </a>
+      <nav class="nav__links" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="icon-btn" type="button" id="theme-toggle" aria-label="Switch colour theme" title="Switch colour theme">
+          <svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a class="btn btn--ghost nav__gh" href="https://github.com/jeevansai-k/webinel">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          GitHub
+        </a>
+        <a class="btn btn--primary" href="#install">Get Webinel</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero__inner">
+        <div class="hero__copy">
+          <p class="eyebrow"><span class="live-dot"></span>Free for Chrome &amp; Firefox · Manifest V3</p>
+          <h1 class="hero__title">That&rsquo;s not PayPal.<br /><span>Webinel knew first.</span></h1>
+          <p class="hero__lead">A browser extension that checks every page you open and stops phishing, look-alike domains and unsafe downloads before you click the wrong thing. No account. No servers. No tracking.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="download/webinel-1.0.0.zip" download>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+              Download v1.0.0
+            </a>
+            <a class="btn btn--lg" href="#how">See how it works</a>
+          </div>
+          <p class="hero__note">One edition. Every feature included. Bring your own free VirusTotal key.</p>
+        </div>
+        <figure class="hero__video">
+          <video src="assets/video/launch.mp4" poster="assets/video/launch-poster.jpg" autoplay muted loop playsinline controls preload="metadata" aria-label="Webinel launch film: a look-alike PayPal address is blocked, the popup checks every site, and a file is scanned before opening."></video>
+          <figcaption>20-second launch film · sound on for the soundtrack</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Proof strip: numbers taken from the product -->
+    <section class="strip" aria-label="Webinel in numbers">
+      <div class="wrap strip__grid">
+        <div><strong>3 s</strong><span>locked “Continue Anyway” on every block</span></div>
+        <div><strong>~6 s</strong><span>for a Scan Now verdict on any link</span></div>
+        <div><strong>70+</strong><span>antivirus engines via VirusTotal</span></div>
+        <div><strong>0</strong><span>servers, accounts or analytics</span></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="eyebrow">Features</p>
+          <h2>A sentinel for every tab.</h2>
+          <p>Everything ships in the one free edition. Green, amber and red are kept for verdicts only, so a glance tells you where you stand.</p>
+        </header>
+        <div class="features">
+          <article class="feature feature--wide">
+            <div class="feature__text">
+              <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+              <h3>Real-time protection</h3>
+              <p>Every page you open is checked against local heuristics, the Smart Cache and VirusTotal. Dangerous pages are blocked with a full-page warning; suspicious ones are flagged, or blocked if you prefer.</p>
+              <ul class="ticks">
+                <li>Look-alike and homoglyph domains: <code>paypa1</code>, <code>rnicrosoft</code></li>
+                <li>Brand names on foreign domains, raw IPs, punycode, risky TLDs</li>
+                <li>Password forms that post elsewhere or load over plain HTTP</li>
+              </ul>
+            </div>
+            <img class="feature__shot feature__shot--card" src="assets/shots/warning-dark.webp" width="580" height="700" alt="Webinel's blocked-site page for paypa1-secure-login.xyz, listing three reasons and a locked Continue Anyway button." loading="lazy" />
+          </article>
+
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+            <h3>Scan Now</h3>
+            <p>One click from the popup, or paste any link. A VirusTotal verdict in about six seconds: detection ratio, vendors, reputation and more.</p>
+          </article>
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h3>Advanced Analysis</h3>
+            <p>The complete report with no time limit, running in the background: DNS, certificate, WHOIS, redirect chain and every vendor. Plus email-link and clipboard scanners.</p>
+          </article>
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M4.27 21a2 2 0 0 0 1.73 1H18a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3"/><circle cx="5" cy="14" r="3"/></svg></span>
+            <h3>Document Scanner</h3>
+            <p>Files are fingerprinted on your device and only the SHA-256 is checked. Nothing is uploaded unless you say so. Opens in the browser side panel.</p>
+          </article>
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg></span>
+            <h3>Download guard</h3>
+            <p>Disguised programs like <code>invoice.pdf.exe</code> are cancelled; risky downloads from unverified sources are paused until you decide.</p>
+          </article>
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg></span>
+            <h3>Secure bookmarks &amp; whitelist</h3>
+            <p>Bookmarks re-check a site before opening it. Trusted sites (and their subdomains) are never blocked.</p>
+          </article>
+          <article class="feature">
+            <span class="feature__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
+            <h3>Timeline &amp; statistics</h3>
+            <p>Every block, scan and change, recorded by domain only on your device, with a seven-day chart. No browsing history is kept.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section section--tint" aria-labelledby="gallery-title">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="eyebrow">The interface</p>
+          <h2 id="gallery-title">Calm by default. Loud when it matters.</h2>
+          <p>A 440 × 600 popup in the Nightwatch design, in dark or light, following your system.</p>
+        </header>
+        <div class="gallery" role="list">
+          <figure role="listitem"><img src="assets/shots/home-dark.webp" width="440" height="600" alt="Popup home in dark theme: radar status card reading You're Protected, six tools and recent activity." loading="lazy" /><figcaption>Home · radar status</figcaption></figure>
+          <figure role="listitem"><img src="assets/shots/scan-dark.webp" width="440" height="600" alt="Scan Now showing a dangerous verdict with 5 of 32 vendors flagging a look-alike site." loading="lazy" /><figcaption>Scan Now · 6-second verdict</figcaption></figure>
+          <figure role="listitem"><img src="assets/shots/home-light.webp" width="440" height="600" alt="Popup home in light theme." loading="lazy" /><figcaption>Light theme</figcaption></figure>
+          <figure role="listitem"><img src="assets/shots/statistics-dark.webp" width="440" height="600" alt="Statistics: sites checked, threats blocked and a seven-day chart." loading="lazy" /><figcaption>Statistics</figcaption></figure>
+          <figure role="listitem"><img src="assets/shots/settings-dark.webp" width="440" height="600" alt="Settings with the VirusTotal key card and protection toggles." loading="lazy" /><figcaption>Settings</figcaption></figure>
+          <figure role="listitem"><img src="assets/shots/timeline-light.webp" width="440" height="600" alt="Timeline of security events in light theme." loading="lazy" /><figcaption>Timeline</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section" id="how">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="eyebrow">How it works</p>
+          <h2>Local first. VirusTotal second. You decide.</h2>
+          <p>Every navigation runs through the same five-step pipeline inside your browser. The cheapest, most private check always goes first.</p>
+        </header>
+        <ol class="pipeline">
+          <li><span class="pipeline__n">1</span><h3>Whitelist</h3><p>Sites you trust pass instantly. No network.</p></li>
+          <li><span class="pipeline__n">2</span><h3>Heuristics</h3><p>A local 0–100 score: look-alikes, IP hosts, punycode, bait words, password forms.</p></li>
+          <li><span class="pipeline__n">3</span><h3>Smart Cache</h3><p>Results keyed by one-way hashes, so the cache is never a readable history.</p></li>
+          <li><span class="pipeline__n">4</span><h3>VirusTotal</h3><p>Only with your own key, within its free limit of 4 requests a minute.</p></li>
+          <li><span class="pipeline__n">5</span><h3>Decision</h3><p><b class="v v--safe">Allow</b> <b class="v v--warn">Warn</b> <b class="v v--danger">Block</b>. Unknown is never shown as Safe.</p></li>
+        </ol>
+        <div class="split">
+          <img src="assets/shots/documents-dark.webp" width="400" height="760" alt="Document Scanner in the browser side panel showing a report for invoice_2026.exe flagged by 3 of 32 vendors." loading="lazy" />
+          <div>
+            <h3 class="split__title">Files, without giving them away.</h3>
+            <p>Drop a PDF, DOCX, XLSX, ZIP, EXE, APK, image or TXT (up to 32 MB). Webinel computes the SHA-256 on your device and asks VirusTotal whether it knows that exact file.</p>
+            <p>If it doesn't, you see a clear consent card before anything leaves your machine. Text files also get their links extracted and checked.</p>
+            <ul class="ticks">
+              <li>Opens in the browser side panel, which stays open while you pick a file</li>
+              <li>Uploads only after you press “Upload to VirusTotal”</li>
+              <li>Results keep running in the background if you close the panel</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="section section--tint" id="privacy">
+      <div class="wrap privacy">
+        <div>
+          <p class="eyebrow">Privacy</p>
+          <h2>Protect first.<br />Respect privacy always.</h2>
+          <p>Webinel has no backend to breach and nothing to sell. The only outside service is VirusTotal, and only with your own API key.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>Accounts</dt><dd>None. No sign-in, ever.</dd></div>
+          <div><dt>Telemetry</dt><dd>None. No analytics, no crash reporting.</dd></div>
+          <div><dt>Your API key</dt><dd>Encrypted on this device, never synced, never shown again after saving.</dd></div>
+          <div><dt>What VirusTotal sees</dt><dd>The domain of sites you open; full links or file fingerprints only when you ask.</dd></div>
+          <div><dt>Email &amp; clipboard</dt><dd>Links only, never message text, and only when you press scan.</dd></div>
+          <div><dt>Uninstall</dt><dd>Removing the extension deletes all of its data.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <header class="section__head section__head--center">
+          <p class="eyebrow">Pricing</p>
+          <h2>One plan. It's free.</h2>
+          <p>No Premium, no Community edition, no trial. Every feature is in the one download.</p>
+        </header>
+        <div class="plan">
+          <div class="plan__head">
+            <h3>Webinel</h3>
+            <p class="plan__price"><span>$0</span> forever</p>
+            <p class="plan__sub">Bring your own free VirusTotal API key.</p>
+          </div>
+          <ul class="ticks plan__list">
+            <li>Real-time protection &amp; full-page warnings</li>
+            <li>Scan Now and Advanced Analysis</li>
+            <li>Document Scanner with consent-only uploads</li>
+            <li>Download guard, email &amp; clipboard link scanners</li>
+            <li>Secure bookmarks, whitelist, timeline, statistics</li>
+            <li>Dark, light and auto themes</li>
+          </ul>
+          <a class="btn btn--primary btn--lg btn--block" href="#install">Install Webinel</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install -->
+    <section class="section section--tint" id="install">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="eyebrow">Install</p>
+          <h2>Running in under a minute.</h2>
+          <p>Webinel isn't in the browser stores yet, so you load it yourself. Download the build, or build it from source.</p>
+        </header>
+        <div class="install">
+          <article class="install__card">
+            <h3>Chrome, Edge, Brave &amp; Chromium</h3>
+            <ol class="steps">
+              <li><a href="download/webinel-1.0.0.zip" download>Download webinel-1.0.0.zip</a> and unzip it.</li>
+              <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b>.</li>
+              <li>Click <b>Load unpacked</b> and choose the unzipped folder.</li>
+              <li>Pin Webinel, open it and add your VirusTotal key in Settings.</li>
+            </ol>
+          </article>
+          <article class="install__card">
+            <h3>Firefox 121+</h3>
+            <ol class="steps">
+              <li><a href="download/webinel-1.0.0.zip" download>Download webinel-1.0.0.zip</a>.</li>
+              <li>Open <code>about:debugging#/runtime/this-firefox</code>.</li>
+              <li>Click <b>Load Temporary Add-on…</b> and pick <code>manifest.json</code> from the unzipped folder.</li>
+              <li>Allow site access when asked. Temporary add-ons are removed when Firefox restarts, until Webinel is signed.</li>
+            </ol>
+          </article>
+          <article class="install__card install__card--code">
+            <h3>From source</h3>
+<pre><code>git clone https://github.com/jeevansai-k/webinel
+cd webinel
+npm ci
+npm run build   # → dist/</code></pre>
+            <p>Then load <code>dist/</code> as above. Node 22+.</p>
+          </article>
+        </div>
+        <div class="callout">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+          <p><b>Get a free VirusTotal key:</b> sign in at virustotal.com, open your profile, copy the API key and paste it into Webinel → Settings. It stays on your device.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="wrap faq">
+        <header class="section__head">
+          <p class="eyebrow">FAQ</p>
+          <h2>Questions, answered.</h2>
+        </header>
+        <div class="faq__list">
+          <details><summary>Does Webinel work without a VirusTotal key?</summary><p>Yes. The local heuristics, whitelist, download guard and warnings all work offline. A key adds reputation checks from 70+ engines, Scan Now, Advanced Analysis and file lookups.</p></details>
+          <details><summary>Will it slow down my browsing?</summary><p>Checks run in the background service worker. Known sites come from the Smart Cache, and real-time checks use one domain lookup per host.</p></details>
+          <details><summary>Why is “Continue Anyway” locked for three seconds?</summary><p>So nobody rushes past a real threat. A glass overlay drains across the button like a health bar; only then can you continue, and the site is allowed for 30 minutes.</p></details>
+          <details><summary>What happens when VirusTotal has never seen a file?</summary><p>You get a consent card explaining that uploaded files are shared with VirusTotal and its partners. Nothing is uploaded unless you press the button, so keep confidential documents to yourself.</p></details>
+          <details><summary>Is there a paid version?</summary><p>No. There is one edition, it's free, and every feature is included.</p></details>
+          <details><summary>Where is the source?</summary><p>On <a href="https://github.com/jeevansai-k/webinel">GitHub</a>: TypeScript, Vite and Vitest, with the architecture, security model and test plan documented in the repository.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap final__inner">
+        <img src="assets/logo.svg" width="72" height="72" alt="" />
+        <h2>Put a sentinel on watch.</h2>
+        <p>Free for Chrome and Firefox. No account. No tracking.</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary btn--lg" href="download/webinel-1.0.0.zip" download>Download v1.0.0</a>
+          <a class="btn btn--lg" href="https://github.com/jeevansai-k/webinel">View on GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <div class="brand"><img src="assets/logo.svg" width="24" height="24" alt="" /><span class="brand__name">Webinel</span><span class="footer__tag">Your Web Sentinel</span></div>
+      <nav aria-label="Footer">
+        <a href="#features">Features</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/jeevansai-k/webinel">GitHub</a>
+        <a href="https://github.com/jeevansai-k/webinel/blob/main/docs/SECURITY.md">Security</a>
+      </nav>
+      <p class="footer__fine">Webinel is not affiliated with VirusTotal or any brand named on this page. Fonts: Inter, Space Grotesk, JetBrains Mono (SIL OFL).</p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>
