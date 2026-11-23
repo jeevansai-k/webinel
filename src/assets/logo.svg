@@ -1,13 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="wl-shield" x1="32" y1="4" x2="32" y2="60" gradientUnits="userSpaceOnUse">
+    <linearGradient id="wl-tower" x1="0" y1="4" x2="0" y2="61" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#86dbff"/><stop offset="1" stop-color="#1b8ce8"/>
     </linearGradient>
+    <linearGradient id="wl-beam" x1="23" y1="0" x2="63" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4cc2ff" stop-opacity=".95"/><stop offset="1" stop-color="#4cc2ff" stop-opacity=".3"/>
+    </linearGradient>
   </defs>
-  <path d="M32 3.5 54 11.4v18.4c0 14.3-9.4 25.4-22 30.7C19.4 55.2 10 44.1 10 29.8V11.4z" fill="url(#wl-shield)"/>
-  <path d="M32 3.5 54 11.4v18.4c0 14.3-9.4 25.4-22 30.7z" fill="#0a4f9e" fill-opacity=".22"/>
-  <path d="M14.5 31.5C19.6 23.2 25.6 19 32 19s12.4 4.2 17.5 12.5C44.4 39.8 38.4 44 32 44s-12.4-4.2-17.5-12.5z" fill="#071426"/>
-  <circle cx="32" cy="31.5" r="7.4" fill="#4cc2ff"/>
-  <circle cx="32" cy="31.5" r="3.3" fill="#071426"/>
-  <circle cx="34.6" cy="28.9" r="1.5" fill="#ffffff"/>
+  <path d="M23 15 63 1.5v32L23 21.5z" fill="url(#wl-beam)"/>
+  <path d="M11.5 13 23 3.5 34.5 13z" fill="url(#wl-tower)"/>
+  <rect x="13.5" y="12.5" width="19" height="11.5" rx="2" fill="#070c16"/>
+  <circle cx="23" cy="18.25" r="4.2" fill="#4cc2ff"/>
+  <circle cx="23" cy="18.25" r="1.9" fill="#ffffff"/>
+  <rect x="9.5" y="23.5" width="27" height="4.5" rx="1.5" fill="#1b8ce8"/>
+  <path d="M15.5 28h15l5.5 27.5H10z" fill="url(#wl-tower)"/>
+  <path d="M23 28h7.5l5.5 27.5H23z" fill="#0a4f9e" fill-opacity=".22"/>
+  <rect x="21" y="37" width="4" height="8.5" rx="2" fill="#070c16"/>
+  <rect x="5" y="55" width="36" height="6" rx="2.5" fill="#1b8ce8"/>
 </svg>
