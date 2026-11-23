@@ -30,8 +30,8 @@
   margin-bottom: 4px;
   border-radius: 16px;
   color: var(--on-accent);
-  background: var(--accent-gradient);
-  box-shadow: 0 8px 20px -8px var(--accent-strong);
+  background: var(--accent);
+  box-shadow: 0 8px 20px -8px var(--accent-line);
 }
 
 .dropzone small {

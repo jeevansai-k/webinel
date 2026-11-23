@@ -116,11 +116,39 @@ describe('Settings screen', () => {
   it('switches the theme', async () => {
     backend(true);
     const { root } = await mountScreen(mount);
-    root.querySelector<HTMLInputElement>('[data-role="theme-switch"]')!.click();
+    expect(root.querySelector('[data-theme-option="system"]')!.getAttribute('aria-checked')).toBe('true');
+    root.querySelector<HTMLButtonElement>('[data-theme-option="light"]')!.click();
     await flush();
     expect(document.documentElement.dataset.theme).toBe('light');
     expect((await settingsStore.get()).theme).toBe('light');
     expect(text(root.querySelector('[data-role="theme-label"]'))).toBe('Light');
+    expect(root.querySelector('[data-theme-option="light"]')!.getAttribute('aria-checked')).toBe('true');
+    expect(root.querySelector('[data-theme-option="system"]')!.getAttribute('aria-checked')).toBe('false');
+  });
+
+  it('follows the system theme on Auto', async () => {
+    backend(true);
+    await settingsStore.patch({ theme: 'dark' });
+    const { root } = await mountScreen(mount);
+    root.querySelector<HTMLButtonElement>('[data-theme-option="system"]')!.click();
+    await flush();
+    expect((await settingsStore.get()).theme).toBe('system');
+    expect(text(root.querySelector('[data-role="theme-label"]'))).toBe('Match your system');
+    expect(['dark', 'light']).toContain(document.documentElement.dataset.theme);
+  });
+
+  it('asks before removing the API key', async () => {
+    backend(true);
+    const { root } = await mountScreen(mount);
+    root.querySelector<HTMLButtonElement>('[data-action="edit-key"]')!.click();
+    root.querySelector<HTMLButtonElement>('[data-action="remove-key"]')!.click();
+    await flush();
+    const dialog = document.querySelector('.confirm-dialog')!;
+    expect(text(dialog.querySelector('.confirm-dialog__title'))).toBe('Remove your VirusTotal key?');
+    dialog.querySelector<HTMLButtonElement>('[data-answer="no"]')!.click();
+    await flush();
+    expect(chromeFake().runtime.sendMessage).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'apiKey:clear' }));
+    expect(document.querySelector('.confirm-dialog')).toBeNull();
   });
 
   it('Contact Developer opens the email app and offers the GitHub page', async () => {

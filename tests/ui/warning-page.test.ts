@@ -51,12 +51,22 @@ describe('Warning page', () => {
     const whitelist = vi.fn(() => ({ url: 'https://evil.test/login' }));
     respondTo({ 'warning:details': () => details, 'warning:whitelist': whitelist });
     const gate = await start();
-    vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     const replace = vi.fn();
     vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, search: '?id=w1', replace } as Location);
-    document.querySelector<HTMLButtonElement>('[data-action="whitelist"]')!.click();
+    const answer = async (choice: 'yes' | 'no') => {
+      document.querySelector<HTMLButtonElement>('[data-action="whitelist"]')!.click();
+      const button = await vi.waitFor(() => {
+        const found = document.querySelector<HTMLButtonElement>(`.confirm-dialog [data-answer="${choice}"]`);
+        if (!found) throw new Error('dialog not open yet');
+        return found;
+      });
+      expect(text(document.querySelector('.confirm-dialog__title'))).toBe('Always trust evil.test?');
+      button.click();
+    };
+    await answer('no');
+    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(whitelist).not.toHaveBeenCalled();
-    document.querySelector<HTMLButtonElement>('[data-action="whitelist"]')!.click();
+    await answer('yes');
     await vi.waitFor(() => expect(replace).toHaveBeenCalledWith('https://evil.test/login'));
     expect(whitelist).toHaveBeenCalledWith({ id: 'w1' });
     gate.destroy();

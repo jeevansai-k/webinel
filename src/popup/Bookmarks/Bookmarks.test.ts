@@ -36,6 +36,24 @@ describe('Bookmarks screen', () => {
     expect(chromeFake().tabs.create).not.toHaveBeenCalled();
   });
 
+  it('asks in the popup (not window.confirm) before opening a suspicious bookmark', async () => {
+    await bookmarkStore.add('https://bank.example/', 'Bank');
+    scanReturns('suspicious');
+    const nativeConfirm = vi.spyOn(window, 'confirm');
+    const { root } = await mountScreen(mount);
+    root.querySelector<HTMLElement>('.bookmark-row')!.click();
+    const dialog = await vi.waitFor(() => {
+      const found = document.querySelector('.confirm-dialog');
+      if (!found) throw new Error('dialog not open yet');
+      return found;
+    });
+    expect(text(dialog.querySelector('.confirm-dialog__message'))).toBe('suspicious now');
+    expect(chromeFake().tabs.create).not.toHaveBeenCalled();
+    dialog.querySelector<HTMLButtonElement>('[data-answer="yes"]')!.click();
+    await vi.waitFor(() => expect(chromeFake().tabs.create).toHaveBeenCalledWith({ url: 'https://bank.example/' }));
+    expect(nativeConfirm).not.toHaveBeenCalled();
+  });
+
   it('removes bookmarks without opening them', async () => {
     await bookmarkStore.add('https://bank.example/', 'Bank');
     const { root } = await mountScreen(mount);

@@ -7,36 +7,16 @@
     </div>
   </div>
   <button class="icon-btn home-header__settings" type="button" data-action="settings" aria-label="Settings" title="Settings">
-    <span data-icon="settings" data-icon-size="18"></span>
+    <span data-icon="settings" data-icon-size="17"></span>
   </button>
 </header>
 
 <div class="home-body">
-  <nav class="tile-grid" aria-label="Webinel tools">
-    <button class="tile glass" type="button" data-go="whitelist">
-      <span class="tile__icon" data-icon="whitelist" data-icon-size="16"></span><span class="tile__label">Whitelist</span>
-    </button>
-    <button class="tile glass" type="button" data-go="statistics">
-      <span class="tile__icon" data-icon="statistics" data-icon-size="16"></span><span class="tile__label">Statistics</span>
-    </button>
-    <button class="tile glass" type="button" data-go="bookmarks">
-      <span class="tile__icon" data-icon="bookmark" data-icon-size="16"></span><span class="tile__label">Bookmarks</span>
-    </button>
-    <button class="tile glass" type="button" data-go="advanced">
-      <span class="tile__icon" data-icon="analysis" data-icon-size="16"></span><span class="tile__label">Advanced Analysis</span>
-    </button>
-    <button class="tile glass" type="button" data-go="documents">
-      <span class="tile__icon" data-icon="document" data-icon-size="16"></span><span class="tile__label">Document Scanner</span>
-    </button>
-    <button class="tile glass" type="button" data-go="timeline">
-      <span class="tile__icon" data-icon="timeline" data-icon-size="16"></span><span class="tile__label">Timeline</span>
-    </button>
-  </nav>
-
-  <section class="protection glass" data-role="protection" data-state="on" aria-label="Protection status">
-    <div class="protection__shield" aria-hidden="true">
-      <span class="protection__ring"></span>
-      <span class="protection__ring protection__ring--late"></span>
+  <section class="protection" data-role="protection" data-state="on" aria-label="Protection status">
+    <div class="protection__scope" aria-hidden="true">
+      <span class="protection__sweep"></span>
+      <span class="protection__ring protection__ring--outer"></span>
+      <span class="protection__ring protection__ring--inner"></span>
       <span class="protection__badge" data-role="shield-icon"></span>
     </div>
     <div class="protection__info">
@@ -50,7 +30,33 @@
         </button>
       </div>
     </div>
+    <button class="protection__setup" type="button" data-action="setup-key" hidden>
+      <span data-icon="key" data-icon-size="13"></span>
+      <span>Add a free VirusTotal key for reputation checks</span>
+      <span class="protection__setup-cta">Set up</span>
+    </button>
   </section>
+
+  <nav class="tile-grid" aria-label="Webinel tools">
+    <button class="tile glass" type="button" data-go="whitelist">
+      <span class="tile__icon" data-icon="whitelist" data-icon-size="15"></span><span class="tile__label">Whitelist</span>
+    </button>
+    <button class="tile glass" type="button" data-go="statistics">
+      <span class="tile__icon" data-icon="statistics" data-icon-size="15"></span><span class="tile__label">Statistics</span>
+    </button>
+    <button class="tile glass" type="button" data-go="bookmarks">
+      <span class="tile__icon" data-icon="bookmark" data-icon-size="15"></span><span class="tile__label">Bookmarks</span>
+    </button>
+    <button class="tile glass" type="button" data-go="advanced">
+      <span class="tile__icon" data-icon="analysis" data-icon-size="15"></span><span class="tile__label">Advanced Analysis</span>
+    </button>
+    <button class="tile glass" type="button" data-go="documents">
+      <span class="tile__icon" data-icon="document" data-icon-size="15"></span><span class="tile__label">Document Scanner</span>
+    </button>
+    <button class="tile glass" type="button" data-go="timeline">
+      <span class="tile__icon" data-icon="timeline" data-icon-size="15"></span><span class="tile__label">Timeline</span>
+    </button>
+  </nav>
 
   <section class="activity" aria-label="Recent activity">
     <h3 class="section-title">Recent Activity</h3>

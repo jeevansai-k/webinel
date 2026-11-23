@@ -75,13 +75,13 @@ const responses: Record<string, (payload: any) => unknown> = {
     return { kind: 'report', report: variant === 'partial' ? partialReport : phishingReport };
   },
   'file:lookup': async () => (variant === 'upload' ? { kind: 'needs-upload', sha256: fileReport.file!.sha256 } : { kind: 'report', report: fileReport }),
-  'tab:current-report': () => report,
+  'tab:current-report': () => (variant === 'danger' ? { ...report, verdict: 'dangerous', action: 'block' } : variant === 'warn' ? { ...report, verdict: 'suspicious', action: 'warn' } : report),
   'tab:redirects': () => [
     { from: 'bit.ly/3xYz', to: 't.co/abc', statusCode: 301, timestamp: now },
     { from: 't.co/abc', to: 'github.com/', statusCode: 302, timestamp: now },
   ],
   'scan:url': () => report,
-  'apiKey:status': () => ({ configured: true }),
+  'apiKey:status': () => ({ configured: variant !== 'nokey' }),
   'api:health': () => ({ state: 'online', checkedAt: now, latencyMs: 184 }),
   'warning:details': () => ({
     id: 'demo',

@@ -35,7 +35,7 @@
 .detection-circle[data-tone='danger'] { --tone: var(--danger); }
 
 .detection-circle__track {
-  stroke: var(--glass-strong);
+  stroke: var(--surface-3);
 }
 
 .detection-circle__arc {
@@ -61,8 +61,9 @@
 }
 
 .detection-circle__detected {
+  font-family: var(--display);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--tone);
   font-variant-numeric: tabular-nums;
@@ -107,8 +108,9 @@
 
 .result-header__title {
   margin-top: 4px;
-  font-size: 16px;
-  font-weight: 750;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -154,7 +156,7 @@
   grid-template-columns: 104px 1fr;
   gap: 10px;
   padding: 5px 0;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid var(--line);
 }
 
 .meta-grid__label {
@@ -241,7 +243,7 @@
 .vendor-table td,
 .record-table td {
   padding: 5px 0;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid var(--line);
   vertical-align: middle;
 }
 
@@ -327,7 +329,7 @@
   bottom: 12px;
   left: 5px;
   width: 1.5px;
-  background: var(--glass-border);
+  background: var(--line);
 }
 
 .redirect-timeline__hop:last-child::before,
@@ -417,7 +419,7 @@
   height: 4px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--glass-strong);
+  background: var(--surface-3);
 }
 
 .analysis-progress__bar span {
@@ -425,7 +427,7 @@
   inset: 0 auto 0 0;
   width: 35%;
   border-radius: 999px;
-  background: var(--accent-gradient);
+  background: var(--accent);
   animation: progress-slide 1.6s var(--ease) infinite;
 }
 
@@ -530,7 +532,7 @@
   height: 4px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--glass-strong);
+  background: var(--surface-3);
 }
 
 .scan-timer span {
@@ -538,7 +540,7 @@
   height: 100%;
   width: 0;
   border-radius: 999px;
-  background: var(--accent-gradient);
+  background: var(--accent);
 }
 
 .scan-timer--running span {

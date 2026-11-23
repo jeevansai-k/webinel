@@ -1,26 +1,5 @@
 .timeline__filters {
-  display: flex;
-  gap: 6px;
   flex-shrink: 0;
-}
-
-.timeline__filter {
-  flex: 1;
-  height: 30px;
-  border-radius: 999px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s var(--ease);
-}
-
-.timeline__filter[aria-selected='true'] {
-  color: var(--on-accent);
-  border-color: transparent;
-  background: var(--accent-gradient);
 }
 
 .timeline {
@@ -47,7 +26,7 @@
   bottom: 2px;
   left: 13px;
   width: 1.5px;
-  background: var(--glass-border);
+  background: var(--line);
 }
 
 .timeline-item:last-child::before {

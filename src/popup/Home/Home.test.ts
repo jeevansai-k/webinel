@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { chromeFake, respondTo } from '../../../tests/setup/chromeMock';
 import { mountScreen, setActiveTab, text } from '../../../tests/setup/screen';
 import { activityStore } from '../../storage/ActivityStore';
@@ -50,6 +50,30 @@ describe('Home screen', () => {
     const chip = root.querySelector('[data-role="site-verdict"]')!;
     expect(text(chip)).toBe('Unverified');
     expect(chip.querySelector('.chip--safe')).toBeNull();
+  });
+
+  it('turns the status red when the open page is dangerous', async () => {
+    setActiveTab('https://evil.example/login');
+    respondTo({ 'tab:current-report': () => ({ host: 'evil.example', verdict: 'dangerous' }) });
+    const { root } = await mountScreen(mount);
+    expect(root.querySelector('[data-role="protection"]')!.getAttribute('data-state')).toBe('danger');
+    expect(text(root.querySelector('[data-role="title"]'))).toBe('Threat on this page');
+  });
+
+  it('nudges first-time users to add a VirusTotal key', async () => {
+    respondTo({ 'apiKey:status': () => ({ configured: false }) });
+    const { root, ctx } = await mountScreen(mount);
+    const setup = root.querySelector<HTMLButtonElement>('[data-action="setup-key"]')!;
+    await vi.waitFor(() => expect(setup.hidden).toBe(false));
+    setup.click();
+    expect(ctx.navigate).toHaveBeenCalledWith('settings');
+  });
+
+  it('hides the key nudge once a key exists', async () => {
+    respondTo({ 'apiKey:status': () => ({ configured: true }) });
+    const { root } = await mountScreen(mount);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(root.querySelector<HTMLButtonElement>('[data-action="setup-key"]')!.hidden).toBe(true);
   });
 
   it('reflects paused protection', async () => {

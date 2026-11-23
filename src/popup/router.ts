@@ -57,8 +57,30 @@ export class Router {
     root.dataset.screen = screen;
     this.outlet.replaceChildren(root);
 
-    const result = await this.screens[screen](root, { navigate: this.navigate, back: this.back });
+    let result: void | Cleanup;
+    try {
+      result = await this.screens[screen](root, { navigate: this.navigate, back: this.back });
+    } catch (error) {
+      // Never leave the popup blank: show a way back instead.
+      console.warn(`Webinel: could not open ${screen}`, error);
+      if (this.current === screen) this.renderFailure(root, screen);
+      return;
+    }
     if (this.current === screen && typeof result === 'function') this.cleanup = result;
     else if (typeof result === 'function') result();
+  }
+
+  private renderFailure(root: HTMLElement, screen: ScreenName): void {
+    root.innerHTML = `<div class="screen-error" role="alert">
+      <strong>This screen could not load</strong>
+      <span>Webinel's background service may be restarting. Try again in a moment.</span>
+      <button class="btn" type="button" data-action="retry">Try again</button>
+      ${screen === 'home' ? '' : '<button class="btn btn--ghost" type="button" data-action="home">Back to Home</button>'}
+    </div>`;
+    root.querySelector('[data-action="retry"]')?.addEventListener('click', () => void this.show(screen, false));
+    root.querySelector('[data-action="home"]')?.addEventListener('click', () => {
+      this.history.length = 0;
+      void this.show('home', true);
+    });
   }
 }

@@ -1,4 +1,5 @@
 import { mountScreenHeader } from '../../shared/components/ScreenHeader';
+import { confirmDialog } from '../../shared/components/ConfirmDialog';
 import { showToast } from '../../shared/components/Toast';
 import { verdictTone } from '../../shared/components/VerdictChip';
 import { escapeHtml, hydrateIcons, query } from '../../shared/dom';
@@ -77,7 +78,13 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
   }
 
   query(root, '[data-action="clear"]').addEventListener('click', async () => {
-    if (!window.confirm('Clear all timeline events?')) return;
+    const confirmed = await confirmDialog({
+      title: 'Clear the timeline?',
+      message: 'Every recorded security event is deleted from this device. Statistics are kept.',
+      confirmLabel: 'Clear timeline',
+      tone: 'danger',
+    });
+    if (!confirmed) return;
     await timelineStore.set([]);
     showToast('Timeline cleared', 'info');
   });

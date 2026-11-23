@@ -22,11 +22,20 @@ export interface FileNameAssessment {
   reason: string | null;
 }
 
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    // Malformed percent-escapes ("%E0%A4%A") must not abort the download check.
+    return value;
+  }
+}
+
 export function fileNameFromDownload(filename: string, url: string): string {
   const fromPath = filename.split(/[\\/]/).pop();
   if (fromPath) return fromPath;
   const parsed = parseUrl(url);
-  return decodeURIComponent(parsed?.pathname.split('/').pop() ?? '') || 'download';
+  return safeDecode(parsed?.pathname.split('/').pop() ?? '') || 'download';
 }
 
 export function assessFileName(fileName: string): FileNameAssessment {
@@ -59,9 +68,24 @@ async function notify(title: string, message: string): Promise<void> {
 }
 
 export class DownloadGuard {
+  /** Downloads already paused or cancelled, so a later name update does not act twice. */
+  private readonly handled = new Set<number>();
+
   constructor(private readonly engine: ThreatEngine) {}
 
+  /**
+   * Chrome often reports a download before its final file name is known (e.g.
+   * "download.php?id=7" that turns out to be "invoice.pdf.exe"). Re-check once the
+   * name is decided.
+   */
+  async onFilenameDetermined(downloadId: number): Promise<void> {
+    if (this.handled.has(downloadId)) return;
+    const [item] = await chrome.downloads.search({ id: downloadId }).catch(() => [] as chrome.downloads.DownloadItem[]);
+    if (item && item.state === 'in_progress') await this.inspect(item);
+  }
+
   async inspect(item: chrome.downloads.DownloadItem): Promise<void> {
+    if (this.handled.has(item.id)) return;
     if (!(await settingsStore.get()).downloadScanner) return;
     const sourceUrl = item.finalUrl || item.url;
     const fileName = fileNameFromDownload(item.filename, sourceUrl);
@@ -69,12 +93,19 @@ export class DownloadGuard {
 
     let sourceVerdict: 'safe' | 'suspicious' | 'dangerous' | 'unknown' | 'error' = 'unknown';
     let sourceReason: string | null = null;
-    let sourceHost = parseUrl(sourceUrl)?.hostname ?? 'local file';
+    // blob: and data: downloads have no hostname of their own.
+    let sourceHost = parseUrl(sourceUrl)?.hostname || 'this page';
     if (isScannableUrl(sourceUrl)) {
-      const report = await this.engine.evaluate(sourceUrl, 'domain', { record: false });
-      sourceVerdict = report.verdict;
-      sourceReason = report.reasons[0] ?? null;
-      sourceHost = report.host;
+      try {
+        const report = await this.engine.evaluate(sourceUrl, 'domain', { record: false });
+        sourceVerdict = report.verdict;
+        sourceReason = report.reasons[0] ?? null;
+        sourceHost = report.host;
+      } catch (error) {
+        // Keep checking the file name even if the source lookup fails.
+        logger.warn('Download source check failed', error);
+        sourceHost = parseUrl(sourceUrl)?.hostname || sourceHost;
+      }
     }
 
     const dangerous = nameCheck.risk === 'dangerous' || sourceVerdict === 'dangerous';
@@ -86,6 +117,7 @@ export class DownloadGuard {
       nameCheck.reason ??
       'Unverified source';
 
+    this.handled.add(item.id);
     if (dangerous) {
       await chrome.downloads.cancel(item.id).catch(() => undefined);
       await statsStore.increment('downloadsBlocked');

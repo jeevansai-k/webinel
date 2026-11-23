@@ -1,4 +1,5 @@
 import { mountScreenHeader } from '../../shared/components/ScreenHeader';
+import { confirmDialog } from '../../shared/components/ConfirmDialog';
 import { showToast } from '../../shared/components/Toast';
 import { verdictChip } from '../../shared/components/VerdictChip';
 import { escapeHtml, hydrateIcons, query } from '../../shared/dom';
@@ -47,7 +48,16 @@ async function openBookmark(bookmark: SecureBookmark, row: HTMLElement): Promise
       showToast(`Not opened: ${report.reasons[0] ?? 'this site is now flagged as dangerous'}`, 'error', 4000);
       return;
     }
-    if (report.verdict === 'suspicious' && !window.confirm(`${bookmark.host} looks suspicious:\n${report.reasons[0] ?? ''}\n\nOpen anyway?`)) {
+    if (
+      report.verdict === 'suspicious' &&
+      !(await confirmDialog({
+        title: `${bookmark.host} looks suspicious`,
+        message: report.reasons[0] ?? 'Webinel found warning signs on this site.',
+        confirmLabel: 'Open anyway',
+        cancelLabel: 'Stay here',
+        tone: 'danger',
+      }))
+    ) {
       return;
     }
     await chrome.tabs.create({ url: bookmark.url });

@@ -1,5 +1,6 @@
 import '../shared/styles/theme.css';
 import './Warning.css';
+import { confirmDialog } from '../shared/components/ConfirmDialog';
 import { showToast } from '../shared/components/Toast';
 import { escapeHtml, query } from '../shared/dom';
 import { icon, logoMark } from '../shared/icons';
@@ -30,8 +31,12 @@ async function leaveToSafety(): Promise<void> {
   const tab = await chrome.tabs.getCurrent();
   if (!tab?.id) return;
   try {
+    // Chromium allows navigating to its New Tab page.
     await chrome.tabs.update(tab.id, { url: 'chrome://newtab/' });
   } catch {
+    // Firefox refuses privileged URLs: open the user's default new tab beside this one,
+    // then close the blocked tab, so the window never disappears with it.
+    await chrome.tabs.create({ active: true, index: tab.index + 1, windowId: tab.windowId }).catch(() => undefined);
     await chrome.tabs.remove(tab.id);
   }
 }
@@ -64,7 +69,14 @@ export async function start(root: Document = document): Promise<ContinueGate> {
   });
 
   query(root, '[data-action="whitelist"]').addEventListener('click', async () => {
-    if (!window.confirm('Always trust this site? Webinel will stop warning you about it.')) return;
+    const host = query(root, '[data-role="host"]').textContent ?? 'this site';
+    const confirmed = await confirmDialog({
+      title: `Always trust ${host}?`,
+      message: 'Webinel will stop warning you about this site and its subdomains. You can undo this in Whitelist.',
+      confirmLabel: 'Trust this site',
+      tone: 'danger',
+    });
+    if (!confirmed) return;
     try {
       const { url } = await sendMessage('warning:whitelist', { id: warningId });
       location.replace(url);

@@ -27,12 +27,10 @@ describe('popup frame', () => {
     expect(popupRule).toContain('height: 600px');
   });
 
-  it('has a solid black background with no coloured glow', () => {
+  it('has a solid themed background', () => {
     const popupRule = /\.popup\s*{([^}]*)}/.exec(css)?.[1] ?? '';
     expect(popupRule).toContain('background: var(--bg);');
-    expect(popupRule).not.toContain('radial-gradient');
-    expect(theme).not.toMatch(/--bg-glow-[abc]:\s*rgba/);
-    expect(extraCss.join('\n')).not.toContain('radial-gradient(640px');
+    expect(popupRule).not.toContain('gradient');
   });
 
   it('has curved corners and clips its content to them', () => {
@@ -42,24 +40,35 @@ describe('popup frame', () => {
     expect(theme).toMatch(/--radius-xl:\s*22px/);
   });
 
-  it('uses exactly #0b0b0d black and #ff6a00 orange, with no blue accents left', () => {
-    expect(theme).toMatch(/--brand-black:\s*#0b0b0d;/);
-    expect(theme).toMatch(/--brand-orange:\s*#ff6a00;/);
-    expect(theme).toMatch(/--bg:\s*var\(--brand-black\);/);
-    expect(theme).toMatch(/--canvas:\s*var\(--brand-black\);/);
-    expect(theme).toMatch(/--accent:\s*var\(--brand-orange\);/);
-    expect(theme).toMatch(/--accent-gradient:\s*var\(--brand-orange\);/);
-    expect(theme).toMatch(/--safe:\s*#22c55e/);
-    // Only these two brand hexes may appear as blacks/oranges.
-    const hexes = [...[theme, css, ...extraCss].join('\n').matchAll(/#[0-9a-f]{6}\b/gi)].map((match) => match[0].toLowerCase());
-    for (const hex of hexes) {
-      expect(['#0b0b0d', '#ff6a00', '#f5f2ed', '#a8a29a', '#6f6a63', '#22c55e', '#facc15', '#ef4444', '#b91c1c', '#9a948c',
-        '#d9d3ca', '#f4f0ea', '#5f574d', '#958b7f', '#15803d', '#a16207', '#dc2626', '#78716c'], hex).toContain(hex);
+  it('uses the Nightwatch palette: blue-ink neutrals and one signal accent', () => {
+    expect(theme).toMatch(/--brand-ink:\s*#070c16;/);
+    expect(theme).toMatch(/--brand-signal:\s*#4cc2ff;/);
+    expect(theme).toMatch(/--accent:\s*var\(--brand-signal\);/);
+    expect(theme).toMatch(/--on-accent:\s*var\(--brand-ink\);/);
+    // Light theme redefines every surface and the accent.
+    const light = /:root\[data-theme='light'\]\s*{([^}]*)}/.exec(theme)?.[1] ?? '';
+    for (const token of ['--bg', '--surface', '--text', '--accent', '--safe', '--warn', '--danger']) {
+      expect(light, token).toMatch(new RegExp(`${token}:`));
     }
+  });
+
+  it('keeps every colour in theme tokens and drops the old black/orange brand', () => {
     const everyStylesheet = [theme, css, ...extraCss].join('\n');
-    for (const blue of ['#38bdf8', '#0ea5e9', '#818cf8', '#6366f1', '56, 189, 248', '99, 102, 241']) {
-      expect(everyStylesheet, blue).not.toContain(blue);
+    for (const legacy of ['#0b0b0d', '#ff6a00', '255, 106, 0', '--brand-orange', '--brand-black', '--glass-stroke']) {
+      expect(everyStylesheet, legacy).not.toContain(legacy);
     }
+    // Component stylesheets reference tokens; hex values live only in theme.css (white highlights excepted).
+    for (const sheet of [css, ...extraCss]) {
+      const hexes = [...sheet.matchAll(/#[0-9a-f]{3,6}\b/gi)].map((match) => match[0].toLowerCase());
+      expect(hexes.filter((hex) => hex !== '#ffffff' && hex !== '#fff' && hex !== '#000')).toEqual([]);
+    }
+  });
+
+  it('bundles its fonts locally', () => {
+    for (const face of ['Inter Variable', 'Space Grotesk Variable', 'JetBrains Mono Variable']) {
+      expect(theme).toContain(`font-family: '${face}'`);
+    }
+    expect(theme).not.toMatch(/url\(['"]?https?:/);
   });
 
   it('has a 20px footer with only version, privacy and terms', () => {

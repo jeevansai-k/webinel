@@ -10,15 +10,15 @@
 
 <br />
 
-![Manifest V3](https://img.shields.io/badge/Manifest-V3-ff6a00?style=for-the-badge&labelColor=0b0b0d)
-![TypeScript](https://img.shields.io/badge/TypeScript-7-ff6a00?style=for-the-badge&logo=typescript&logoColor=white&labelColor=0b0b0d)
-![Vite](https://img.shields.io/badge/Vite-8-ff6a00?style=for-the-badge&logo=vite&logoColor=white&labelColor=0b0b0d)
-![Vitest](https://img.shields.io/badge/Tested_with-Vitest-ff6a00?style=for-the-badge&logo=vitest&logoColor=white&labelColor=0b0b0d)
+![Manifest V3](https://img.shields.io/badge/Manifest-V3-4cc2ff?style=for-the-badge&labelColor=070c16)
+![TypeScript](https://img.shields.io/badge/TypeScript-7-4cc2ff?style=for-the-badge&logo=typescript&logoColor=white&labelColor=070c16)
+![Vite](https://img.shields.io/badge/Vite-8-4cc2ff?style=for-the-badge&logo=vite&logoColor=white&labelColor=070c16)
+![Vitest](https://img.shields.io/badge/Tested_with-Vitest-4cc2ff?style=for-the-badge&logo=vitest&logoColor=white&labelColor=070c16)
 
-![Chromium](https://img.shields.io/badge/Chromium-supported-ff6a00?style=flat-square&logo=googlechrome&logoColor=white&labelColor=0b0b0d)
-![Firefox](https://img.shields.io/badge/Firefox_121%2B-supported-ff6a00?style=flat-square&logo=firefoxbrowser&logoColor=white&labelColor=0b0b0d)
-![No telemetry](https://img.shields.io/badge/telemetry-none-ff6a00?style=flat-square&labelColor=0b0b0d)
-![No accounts](https://img.shields.io/badge/accounts-none-ff6a00?style=flat-square&labelColor=0b0b0d)
+![Chromium](https://img.shields.io/badge/Chromium-supported-4cc2ff?style=flat-square&logo=googlechrome&logoColor=white&labelColor=070c16)
+![Firefox](https://img.shields.io/badge/Firefox_121%2B-supported-4cc2ff?style=flat-square&logo=firefoxbrowser&logoColor=white&labelColor=070c16)
+![No telemetry](https://img.shields.io/badge/telemetry-none-4cc2ff?style=flat-square&labelColor=070c16)
+![No accounts](https://img.shields.io/badge/accounts-none-4cc2ff?style=flat-square&labelColor=070c16)
 
 <br />
 
@@ -44,7 +44,7 @@
 | 🧠 **Thinks before you click** | Every page you open is checked against local heuristics, a Smart Cache and VirusTotal — and dangerous pages are stopped. |
 | 🔐 **Private by design** | No backend, no accounts, no sign-in, no telemetry, no analytics. VirusTotal is the **only** outside service — and only with **your own** API key. |
 | 🧩 **One edition** | No "Premium", no "Community". Every feature is included. |
-| 🎨 **Feels like a security product** | A 440 × 600 black-glass popup (`#0b0b0d`) with a single orange accent (`#ff6a00`). Green, yellow and red are reserved for security verdicts. |
+| 🎨 **Feels like a security product** | The *Nightwatch* design: a 440 × 600 popup in blue-ink surfaces (`#0a101b`) with one signal-azure accent (`#4cc2ff`), a radar-sweep status hero and locally bundled Inter, Space Grotesk and JetBrains Mono. Green, amber and red are reserved for security verdicts. Auto, Dark and Light themes. |
 
 ---
 
@@ -84,7 +84,7 @@
 ### 🧰 And more
 - **Download guard** — cancels disguised programs like `invoice.pdf.exe`.
 - **Whitelist**, **Statistics**, **Timeline** and **Secure Bookmarks** (re-checked before opening).
-- **API health check**, plus dark and light themes.
+- **API health check**, plus Auto (follows your system), Dark and Light themes.
 
 </td>
 </tr>
@@ -377,7 +377,7 @@ webinel/
 │   └── setup/                      # in-memory chrome.* mock and fake clocks
 │
 ├── preview/                        # dev-only popup preview with a stubbed chrome API
-├── scripts/build-icons.mjs         # logo.svg → PNG icons (needs ImageMagick)
+├── scripts/build-icons.mjs         # logo.svg → PNG icons (uses Playwright's Chromium)
 ├── docs/                           # architecture, scanning engine, security, testing
 ├── vite.config.ts                  # builds the pages and the service worker
 ├── vite.content.config.ts          # builds the content script as a single file
@@ -397,7 +397,7 @@ webinel/
 | `npm test` | Run the full test suite once |
 | `npm run test:watch` | Re-run tests as you edit |
 | `npm run typecheck` | Run the TypeScript checks only |
-| `npm run build:icons` | Regenerate the PNG icons from `src/assets/logo.svg` (needs ImageMagick's `convert`) |
+| `npm run build:icons` | Regenerate the PNG icons from `src/assets/logo.svg` (renders with Playwright's Chromium) |
 
 **Preview the popup in a normal browser tab (no extension install needed):**
 

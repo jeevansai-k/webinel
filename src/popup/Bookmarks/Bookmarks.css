@@ -8,7 +8,7 @@
 }
 
 .bookmark-row:hover {
-  background: var(--glass-hover);
+  background: var(--surface-hover);
 }
 
 .bookmark-row[aria-busy='true'] {

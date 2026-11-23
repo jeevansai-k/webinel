@@ -1,10 +1,11 @@
 /**
  * Webinel content script. Collects a few structural page signals and reports
  * them to the background. It never reads or sends page text, form values,
- * cookies or keystrokes. Built as a standalone IIFE — keep it import-free
- * except for type-only imports.
+ * cookies or keystrokes. Built as a standalone IIFE — keep imports to
+ * small, dependency-free helpers (they are bundled in).
  */
 import type { Envelope, TabPageSignals } from '../shared/messages';
+import { isSameSite } from './sameSite';
 
 function collectSignals(): TabPageSignals {
   const passwordFields = [...document.querySelectorAll<HTMLInputElement>('input[type="password"]')];
@@ -15,7 +16,7 @@ function collectSignals(): TabPageSignals {
     if (!action) return false;
     try {
       const target = new URL(action, location.href);
-      return /^https?:$/.test(target.protocol) && target.hostname !== pageHost;
+      return /^https?:$/.test(target.protocol) && !isSameSite(target.hostname, pageHost);
     } catch {
       return false;
     }

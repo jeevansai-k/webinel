@@ -121,7 +121,9 @@ function buildChrome() {
     downloads: {
       cancel: vi.fn(async () => undefined),
       pause: vi.fn(async () => undefined),
+      search: vi.fn(async () => [] as chrome.downloads.DownloadItem[]),
       onCreated: createEvent(),
+      onChanged: createEvent(),
     },
     permissions: { request: vi.fn(async () => true) },
     scripting: { executeScript: vi.fn(async () => [] as unknown[]) },
@@ -151,7 +153,7 @@ beforeEach(async () => {
   Object.assign(chromeMock.tabs, { ...fresh.tabs, onRemoved: chromeMock.tabs.onRemoved, onUpdated: chromeMock.tabs.onUpdated });
   Object.assign(chromeMock.action, fresh.action);
   Object.assign(chromeMock.notifications, fresh.notifications);
-  Object.assign(chromeMock.downloads, { ...fresh.downloads, onCreated: chromeMock.downloads.onCreated });
+  Object.assign(chromeMock.downloads, { ...fresh.downloads, onCreated: chromeMock.downloads.onCreated, onChanged: chromeMock.downloads.onChanged });
   Object.assign(chromeMock.permissions, fresh.permissions);
   Object.assign(chromeMock.scripting, fresh.scripting);
   document.body.innerHTML = '';

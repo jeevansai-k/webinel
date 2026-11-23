@@ -32,14 +32,37 @@ export function renderActivity(list: HTMLElement, entries: ActivityEntry[], now 
     .join('');
 }
 
-export function renderProtection(root: HTMLElement, settings: Settings): void {
+type ProtectionState = 'on' | 'off' | 'warn' | 'danger';
+
+function protectionState(settings: Settings, siteVerdict: Verdict | null): ProtectionState {
+  if (!settings.realTimeProtection) return 'off';
+  if (siteVerdict === 'dangerous') return 'danger';
+  if (siteVerdict === 'suspicious') return 'warn';
+  return 'on';
+}
+
+const STATE_TITLE: Record<ProtectionState, string> = {
+  on: "You're Protected",
+  off: 'Protection Paused',
+  warn: 'Be careful on this page',
+  danger: 'Threat on this page',
+};
+
+const STATE_ICON: Record<ProtectionState, IconName> = {
+  on: 'shieldCheck',
+  off: 'shieldAlert',
+  warn: 'shieldAlert',
+  danger: 'shieldAlert',
+};
+
+/** The hero reflects both the protection setting and the verdict for the open page. */
+export function renderProtection(root: HTMLElement, settings: Settings, siteVerdict: Verdict | null = null): void {
   const card = query(root, '[data-role="protection"]');
-  const enabled = settings.realTimeProtection;
-  card.dataset.state = enabled ? 'on' : 'off';
-  query(root, '[data-role="title"]').textContent = enabled ? "You're Protected" : 'Protection Paused';
-  query(root, '[data-role="realtime"]').textContent = enabled ? 'Real-time Protection ON' : 'Real-time Protection OFF';
-  const shieldIcon: IconName = enabled ? 'shieldCheck' : 'shieldAlert';
-  query(root, '[data-role="shield-icon"]').innerHTML = icon(shieldIcon, 50);
+  const state = protectionState(settings, siteVerdict);
+  card.dataset.state = state;
+  query(root, '[data-role="title"]').textContent = STATE_TITLE[state];
+  query(root, '[data-role="realtime"]').textContent = settings.realTimeProtection ? 'Real-time Protection ON' : 'Real-time Protection OFF';
+  query(root, '[data-role="shield-icon"]').innerHTML = icon(STATE_ICON[state], 34);
 }
 
 function renderSite(root: HTMLElement, tab: ActiveTabInfo | null, verdict: Verdict | null): void {
@@ -62,7 +85,8 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
     tile.addEventListener('click', () => ctx.navigate(tile.dataset.go as ScreenName));
   }
 
-  renderProtection(root, await settingsStore.get());
+  let settings = await settingsStore.get();
+  renderProtection(root, settings);
   const activityList = query(root, '[data-role="activity"]');
   renderActivity(activityList, await activityStore.get());
 
@@ -73,6 +97,16 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
     if (report && report.host === tab.host) verdict = report.verdict;
   }
   renderSite(root, tab, verdict);
+  renderProtection(root, settings, verdict);
+
+  // First-run nudge: without a key, Webinel can only use local heuristics.
+  const setup = query<HTMLButtonElement>(root, '[data-action="setup-key"]');
+  setup.addEventListener('click', () => ctx.navigate('settings'));
+  void sendMessage('apiKey:status', {})
+    .then(({ configured }) => {
+      setup.hidden = configured;
+    })
+    .catch(() => undefined);
 
   // One-click Scan Now for the current page.
   query<HTMLButtonElement>(root, '[data-action="scan"]').addEventListener('click', () => {
@@ -82,7 +116,10 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<Clea
   });
 
   const unsubscribers = [
-    settingsStore.subscribe((settings) => renderProtection(root, settings)),
+    settingsStore.subscribe((next) => {
+      settings = next;
+      renderProtection(root, settings, verdict);
+    }),
     activityStore.subscribe((entries) => renderActivity(activityList, entries)),
   ];
   return () => unsubscribers.forEach((unsubscribe) => unsubscribe());

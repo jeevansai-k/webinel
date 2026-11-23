@@ -34,7 +34,11 @@ export function isScannableUrl(raw: string): boolean {
  * Returns null for anything that is not an http(s) URL.
  */
 export function normalizeUrl(raw: string): string | null {
-  const candidate = /^[a-z][a-z\d+.-]*:/i.test(raw.trim()) ? raw.trim() : `https://${raw.trim()}`;
+  const trimmed = raw.trim();
+  // "example.com:8443/x" and "localhost:3000" are host:port, not a scheme: a colon
+  // followed by a digit never starts a URL scheme's body for the schemes we accept.
+  const hasScheme = /^[a-z][a-z\d+.-]*:(?!\d)/i.test(trimmed);
+  const candidate = hasScheme ? trimmed : `https://${trimmed}`;
   const url = parseUrl(candidate);
   if (!url || !SCANNABLE_PROTOCOLS.has(url.protocol) || !url.hostname) return null;
 

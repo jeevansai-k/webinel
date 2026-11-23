@@ -1,11 +1,11 @@
 import type { ProtectionAction, Verdict } from '../shared/verdict';
 
 const BADGE: Record<Verdict, { text: string; color: string }> = {
-  safe: { text: '✓', color: '#16a34a' },
-  suspicious: { text: '!', color: '#ca8a04' },
-  dangerous: { text: '!!', color: '#dc2626' },
-  unknown: { text: '?', color: '#57534e' },
-  error: { text: '?', color: '#57534e' },
+  safe: { text: '✓', color: '#12a36b' },
+  suspicious: { text: '!', color: '#d99a00' },
+  dangerous: { text: '!!', color: '#e5484d' },
+  unknown: { text: '?', color: '#5b6b82' },
+  error: { text: '?', color: '#5b6b82' },
 };
 
 export async function showVerdictBadge(tabId: number, verdict: Verdict, action: ProtectionAction): Promise<void> {

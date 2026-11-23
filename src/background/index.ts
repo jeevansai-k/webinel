@@ -163,3 +163,6 @@ chrome.webRequest.onErrorOccurred.addListener(
 );
 
 chrome.downloads.onCreated.addListener((item) => void downloads.inspect(item));
+chrome.downloads.onChanged.addListener((delta) => {
+  if (delta.filename?.current) void downloads.onFilenameDetermined(delta.id);
+});

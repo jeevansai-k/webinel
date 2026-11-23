@@ -1,6 +1,6 @@
 import { LocalStore } from './LocalStore';
 
-export type Theme = 'dark' | 'light';
+export type Theme = 'system' | 'dark' | 'light';
 
 export interface Settings {
   realTimeProtection: boolean;
@@ -18,7 +18,7 @@ export const DEFAULT_SETTINGS: Settings = {
   downloadScanner: true,
   clipboardScanner: false,
   emailLinkScanner: false,
-  theme: 'dark',
+  theme: 'system',
 };
 
 class SettingsStore extends LocalStore<Settings> {

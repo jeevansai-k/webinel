@@ -9,7 +9,22 @@
     Quick verdict in about 6 seconds. Links VirusTotal has never seen are submitted there and become visible to its community.
   </p>
   <div class="scan-timer" data-role="timer" hidden><span></span></div>
-  <div data-role="result" aria-live="polite"></div>
+  <div data-role="result" aria-live="polite">
+    <ol class="scan-steps" aria-label="How Scan Now checks a link">
+      <li class="scan-steps__item">
+        <span class="scan-steps__num">1</span>
+        <div><strong>Local checks</strong><span>Look-alike domains, raw IPs, punycode and risky extensions — on this device.</span></div>
+      </li>
+      <li class="scan-steps__item">
+        <span class="scan-steps__num">2</span>
+        <div><strong>VirusTotal reputation</strong><span>70+ security vendors, using your own API key.</span></div>
+      </li>
+      <li class="scan-steps__item">
+        <span class="scan-steps__num">3</span>
+        <div><strong>Verdict in about 6 seconds</strong><span>Need every vendor? Continue with Advanced Analysis.</span></div>
+      </li>
+    </ol>
+  </div>
   <button class="btn btn--block" type="button" data-action="full-analysis" hidden>
     <span data-icon="analysis" data-icon-size="14"></span>Run complete Advanced Analysis
   </button>

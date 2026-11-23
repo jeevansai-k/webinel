@@ -16,6 +16,13 @@ describe('normalizeUrl', () => {
     expect(normalizeUrl('https://shop.test/?utm_campaign=x')).toBe('https://shop.test/');
   });
 
+  it('treats host:port input as an address, not a URL scheme', () => {
+    expect(normalizeUrl('localhost:8080')).toBe('https://localhost:8080/');
+    expect(normalizeUrl('example.com:8443/admin')).toBe('https://example.com:8443/admin');
+    expect(normalizeUrl('javascript:alert(1)')).toBeNull();
+    expect(normalizeUrl('mailto:someone@example.com')).toBeNull();
+  });
+
   it('assumes https for bare domains', () => {
     expect(normalizeUrl('example.org/login')).toBe('https://example.org/login');
   });

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mountScreen, text } from '../../../tests/setup/screen';
 import { timelineStore } from '../../storage/TimelineStore';
 import { filterEvents, mount } from './Timeline';
@@ -29,6 +29,27 @@ describe('Timeline screen', () => {
     expect(root.querySelectorAll('.timeline-item')).toHaveLength(1);
     expect(root.querySelector('[data-filter="threats"]')!.getAttribute('aria-selected')).toBe('true');
     expect(filterEvents(await timelineStore.get(), 'changes').map((event) => event.subject)).toEqual(['trusted.test']);
+  });
+
+  it('clears the timeline only after in-popup confirmation', async () => {
+    await seed();
+    const { root } = await mountScreen(mount);
+    const clear = root.querySelector<HTMLButtonElement>('[data-action="clear"]')!;
+    clear.click();
+    (await vi.waitFor(() => {
+      const found = document.querySelector<HTMLButtonElement>('.confirm-dialog [data-answer="no"]');
+      if (!found) throw new Error('dialog not open yet');
+      return found;
+    })).click();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(await timelineStore.get()).toHaveLength(3);
+    clear.click();
+    (await vi.waitFor(() => {
+      const found = document.querySelector<HTMLButtonElement>('.confirm-dialog [data-answer="yes"]');
+      if (!found) throw new Error('dialog not open yet');
+      return found;
+    })).click();
+    await vi.waitFor(async () => expect(await timelineStore.get()).toEqual([]));
   });
 
   it('shows new events live and an empty state', async () => {

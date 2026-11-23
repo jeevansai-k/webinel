@@ -54,16 +54,22 @@ export function icon(name: IconName, size = 20, className = ''): string {
   return `<svg class="icon ${className}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PATHS[name]}</svg>`;
 }
 
-/** The Webinel "W" shield mark: orange shield, black W. Gradient ids are suffixed per instance. */
+/**
+ * The Webinel mark: an azure shield with a watchful sentinel eye.
+ * Mirrors src/assets/logo.svg; gradient ids are suffixed per instance.
+ */
 export function logoMark(size = 32, idSuffix = 'a'): string {
   return `<svg class="logo-mark" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
   <defs>
-    <linearGradient id="wl-bg-${idSuffix}" x1="12" y1="4" x2="52" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff6a00"/><stop offset="1" stop-color="#ff6a00"/>
+    <linearGradient id="wl-shield-${idSuffix}" x1="32" y1="4" x2="32" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#86dbff"/><stop offset="1" stop-color="#1b8ce8"/>
     </linearGradient>
   </defs>
-  <path d="M32 3.5 54 11.5v18.2c0 14.2-9.3 25.6-22 30.8C19.3 55.3 10 43.9 10 29.7V11.5z" fill="url(#wl-bg-${idSuffix})"/>
-  <path d="M32 3.5 54 11.5v18.2c0 14.2-9.3 25.6-22 30.8C19.3 55.3 10 43.9 10 29.7V11.5z" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.2"/>
-  <path d="M18.5 21.5 25 42l7-15.5L39 42l6.5-20.5" fill="none" stroke="#0b0b0d" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 3.5 54 11.4v18.4c0 14.3-9.4 25.4-22 30.7C19.4 55.2 10 44.1 10 29.8V11.4z" fill="url(#wl-shield-${idSuffix})"/>
+  <path d="M32 3.5 54 11.4v18.4c0 14.3-9.4 25.4-22 30.7z" fill="#0a4f9e" fill-opacity=".22"/>
+  <path d="M14.5 31.5C19.6 23.2 25.6 19 32 19s12.4 4.2 17.5 12.5C44.4 39.8 38.4 44 32 44s-12.4-4.2-17.5-12.5z" fill="#071426"/>
+  <circle cx="32" cy="31.5" r="7.4" fill="#4cc2ff"/>
+  <circle cx="32" cy="31.5" r="3.3" fill="#071426"/>
+  <circle cx="34.6" cy="28.9" r="1.5" fill="#ffffff"/>
 </svg>`;
 }

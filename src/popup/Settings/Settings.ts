@@ -1,12 +1,13 @@
 import { mountScreenHeader } from '../../shared/components/ScreenHeader';
+import { confirmDialog } from '../../shared/components/ConfirmDialog';
 import { showToast } from '../../shared/components/Toast';
 import { DEVELOPER, developerMailto } from '../../shared/config';
 import { hydrateIcons, query } from '../../shared/dom';
 import { icon, type IconName } from '../../shared/icons';
 import { sendMessage } from '../../shared/messages';
-import { applyTheme } from '../../shared/theme';
+import { applyTheme, resolveTheme } from '../../shared/theme';
 import type { ApiHealth, ApiHealthState } from '../../shared/verdict';
-import { settingsStore, type Settings } from '../../storage/SettingsStore';
+import { settingsStore, type Settings, type Theme } from '../../storage/SettingsStore';
 import { appVersion, mountFooter } from '../Footer';
 import type { ScreenContext } from '../router';
 import template from './Settings.html?raw';
@@ -45,11 +46,16 @@ function renderHealth(root: HTMLElement, state: ApiHealthState | 'checking' | 'i
   health.textContent = state === 'idle' ? '' : label || HEALTH_TEXT[state];
 }
 
+const THEME_TEXT: Record<Theme, string> = { system: 'Match your system', dark: 'Dark', light: 'Light' };
+
 function renderTheme(root: HTMLElement, settings: Settings): void {
-  const isLight = settings.theme === 'light';
-  query<HTMLInputElement>(root, '[data-role="theme-switch"]').checked = isLight;
-  query(root, '[data-role="theme-label"]').textContent = isLight ? 'Light' : 'Dark';
-  query(root, '[data-role="theme-icon"]').innerHTML = icon(isLight ? 'sun' : 'moon', 16);
+  for (const option of root.querySelectorAll<HTMLButtonElement>('[data-theme-option]')) {
+    const selected = option.dataset.themeOption === settings.theme;
+    option.setAttribute('aria-checked', String(selected));
+    option.tabIndex = selected ? 0 : -1;
+  }
+  query(root, '[data-role="theme-label"]').textContent = THEME_TEXT[settings.theme];
+  query(root, '[data-role="theme-icon"]').innerHTML = icon(resolveTheme(settings.theme) === 'light' ? 'sun' : 'moon', 16);
 }
 
 /**
@@ -134,6 +140,13 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<void
   });
 
   query(root, '[data-action="remove-key"]').addEventListener('click', async () => {
+    const confirmed = await confirmDialog({
+      title: 'Remove your VirusTotal key?',
+      message: 'Reputation checks stop until you add a key again. Webinel cannot show the saved key, so keep a copy if you need it.',
+      confirmLabel: 'Remove key',
+      tone: 'danger',
+    });
+    if (!confirmed) return;
     await sendMessage('apiKey:clear', {});
     closeEditor();
     renderSecret(root, false);
@@ -156,10 +169,21 @@ export async function mount(root: HTMLElement, ctx: ScreenContext): Promise<void
   }
 
   renderTheme(root, settings);
-  query<HTMLInputElement>(root, '[data-role="theme-switch"]').addEventListener('change', async (event) => {
-    const theme = (event.target as HTMLInputElement).checked ? 'light' : 'dark';
+  const themeOptions = [...root.querySelectorAll<HTMLButtonElement>('[data-theme-option]')];
+  const chooseTheme = async (theme: Theme) => {
     applyTheme(theme);
     renderTheme(root, await settingsStore.patch({ theme }));
+  };
+  themeOptions.forEach((option, index) => {
+    option.addEventListener('click', () => void chooseTheme(option.dataset.themeOption as Theme));
+    // Radio-group keyboard pattern: arrows move the selection.
+    option.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const next = themeOptions[(index + (event.key === 'ArrowRight' ? 1 : themeOptions.length - 1)) % themeOptions.length]!;
+      next.focus();
+      void chooseTheme(next.dataset.themeOption as Theme);
+    });
   });
 
   const contactButton = query<HTMLButtonElement>(root, '[data-action="contact"]');
